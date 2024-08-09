@@ -19,7 +19,7 @@ add_subdirectory(vendor/EAThread)
 
 # Add source to this project's executable.
 add_executable(PicayuneSW "src/Picayune.cpp" "src/Picayune.h" "vendor/stb/stb_image.cpp")
-add_executable(PicayuneD3D11 "src/D3D11Window.cpp")
+add_executable(PicayuneD3D11 "src/D3D11Window.cpp" "src/D3D11Window.h")
 
 # target_link_libraries(Picayune EASTL EAThread)
 target_link_libraries(PicayuneD3D11 user32 d3d11 EAAssert EAStdC EASTL EAThread)
