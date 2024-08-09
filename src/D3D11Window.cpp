@@ -213,112 +213,114 @@ namespace Picayune
 		return true;
 	}
 
-	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nShowCmd*/)
+	
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nShowCmd*/)
+{
+	Picayune::Win32WindowParams windowParams =
 	{
-		Win32WindowParams windowParams =
-		{
-			&WindowProc,
-			hInstance,
-			L"PicayuneD3D11"
-		};
+		&Picayune::WindowProc,
+		hInstance,
+		L"PicayuneD3D11"
+	};
 
-		HWND hwnd;
-		if (!GetWin32Window(&hwnd, windowParams))
-		{
-			MessageBoxW(0, L"Failed to create window", L"Fatal Error", MB_OK);
-			return GetLastError();
-		}
+	HWND hwnd;
+	if (!Picayune::GetWin32Window(&hwnd, windowParams))
+	{
+		MessageBoxW(0, L"Failed to create window", L"Fatal Error", MB_OK);
+		return GetLastError();
+	}
 
-		ID3D11Device1* d3d11Device = nullptr;
-		ID3D11DeviceContext1* d3d11DeviceContext = nullptr;
-		IDXGISwapChain1* d3d11SwapChain = nullptr;
-		ID3D11RenderTargetView* d3d11framebufferRenderTarget = nullptr;
+	ID3D11Device1* d3d11Device = nullptr;
+	ID3D11DeviceContext1* d3d11DeviceContext = nullptr;
+	IDXGISwapChain1* d3d11SwapChain = nullptr;
+	ID3D11RenderTargetView* d3d11framebufferRenderTarget = nullptr;
 
-		D3D11DeviceAndContextParams d3d11DeviceAndContextParams;
-		d3d11DeviceAndContextParams.creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+	Picayune::D3D11DeviceAndContextParams d3d11DeviceAndContextParams;
+	d3d11DeviceAndContextParams.creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #if defined(DEBUG_BUILD)
-		d3d11DeviceAndContextParams.creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	d3d11DeviceAndContextParams.creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-		D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-		d3d11DeviceAndContextParams.featureLevels = featureLevels;
-		d3d11DeviceAndContextParams.numFeatureLevels = 1;
+	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+	d3d11DeviceAndContextParams.featureLevels = featureLevels;
+	d3d11DeviceAndContextParams.numFeatureLevels = 1;
 
-		if (!CreateD3D11DeviceAndContext(&d3d11Device, &d3d11DeviceContext, d3d11DeviceAndContextParams))
-		{
-			MessageBoxW(0, L"Failed to create D3D11 device and context", L"Fatal Error", MB_OK);
-			return GetLastError();
-		}
+	if (!Picayune::CreateD3D11DeviceAndContext(&d3d11Device, &d3d11DeviceContext, d3d11DeviceAndContextParams))
+	{
+		MessageBoxW(0, L"Failed to create D3D11 device and context", L"Fatal Error", MB_OK);
+		return GetLastError();
+	}
 
 #ifdef DEBUG_BUILD
-		ID3D11Debug* d3dDebug = nullptr;
-		d3d11Device->QueryInterface(
-			__uuidof(ID3D11Debug),
-			(void**)&d3dDebug
-		);
+	ID3D11Debug* d3dDebug = nullptr;
+	d3d11Device->QueryInterface(
+		__uuidof(ID3D11Debug),
+		(void**)&d3dDebug
+	);
 
-		if (d3dDebug)
-		{
-			ID3D11InfoQueue* d3dInfoQueue = nullptr;
-			if (SUCCEEDED(d3dDebug->QueryInterface(
-				__uuidof(ID3D11InfoQueue),
-				(void**)&d3dInfoQueue
-			)) {
-				d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
-				d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
-				d3dInfoQueue->Release();
-			}
-			d3dDebug->Release();
+	if (d3dDebug)
+	{
+		ID3D11InfoQueue* d3dInfoQueue = nullptr;
+		if (SUCCEEDED(d3dDebug->QueryInterface(
+			__uuidof(ID3D11InfoQueue),
+			(void**)&d3dInfoQueue
+		)) {
+			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
+			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
+			d3dInfoQueue->Release();
 		}
+		d3dDebug->Release();
+	}
 #endif
 
-		DXGI_SWAP_CHAIN_DESC1 d3d11SwapChainDesc = {};
-		d3d11SwapChainDesc.Width = 0; // use window width
-		d3d11SwapChainDesc.Height = 0; // use window height
-		d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-		d3d11SwapChainDesc.SampleDesc.Count = 1;
-		d3d11SwapChainDesc.SampleDesc.Quality = 0;
-		d3d11SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		d3d11SwapChainDesc.BufferCount = 2;
-		d3d11SwapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-		d3d11SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		d3d11SwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-		d3d11SwapChainDesc.Flags = 0;
+	DXGI_SWAP_CHAIN_DESC1 d3d11SwapChainDesc = {};
+	d3d11SwapChainDesc.Width = 0; // use window width
+	d3d11SwapChainDesc.Height = 0; // use window height
+	d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+	d3d11SwapChainDesc.SampleDesc.Count = 1;
+	d3d11SwapChainDesc.SampleDesc.Quality = 0;
+	d3d11SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	d3d11SwapChainDesc.BufferCount = 2;
+	d3d11SwapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+	d3d11SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	d3d11SwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+	d3d11SwapChainDesc.Flags = 0;
 
-		D3D11SwapChainParams d3d11SwapChainParams;
-		d3d11SwapChainParams.device = d3d11Device;
-		d3d11SwapChainParams.hwnd = hwnd;
-		d3d11SwapChainParams.desc = d3d11SwapChainDesc;
-		if (!CreateD3D11SwapChain(&d3d11SwapChain, d3d11SwapChainParams))
-		{
-			MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
-			return GetLastError();
-		}
-
-		D3D11FramebufferRenderTargetParams d3d11FramebufferRenderTargetParams;
-		d3d11FramebufferRenderTargetParams.swapChain = d3d11SwapChain;
-		d3d11FramebufferRenderTargetParams.d3d11device = d3d11Device;
-		if (!CreateD3D11FramebufferRenderTarget(&d3d11framebufferRenderTarget, d3d11FramebufferRenderTargetParams))
-		{
-			MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
-			return GetLastError();
-		}
-
-		bool running = true;
-		while (running)
-		{
-			MSG msg = {};
-			while (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE))
-			{
-				if (msg.message == WM_QUIT) running = false;
-				TranslateMessage(&msg);
-				DispatchMessageW(&msg);
-			}
-
-			FLOAT backgroundColor[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
-			d3d11DeviceContext->ClearRenderTargetView(d3d11framebufferRenderTarget, backgroundColor);
-			d3d11SwapChain->Present(1, 0);
-		}
-
-		return 0;
+	Picayune::D3D11SwapChainParams d3d11SwapChainParams;
+	d3d11SwapChainParams.device = d3d11Device;
+	d3d11SwapChainParams.hwnd = hwnd;
+	d3d11SwapChainParams.desc = d3d11SwapChainDesc;
+	if (!CreateD3D11SwapChain(&d3d11SwapChain, d3d11SwapChainParams))
+	{
+		MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
+		return GetLastError();
 	}
+
+	Picayune::D3D11FramebufferRenderTargetParams d3d11FramebufferRenderTargetParams;
+	d3d11FramebufferRenderTargetParams.swapChain = d3d11SwapChain;
+	d3d11FramebufferRenderTargetParams.d3d11device = d3d11Device;
+	if (!Picayune::CreateD3D11FramebufferRenderTarget(&d3d11framebufferRenderTarget, d3d11FramebufferRenderTargetParams))
+	{
+		MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
+		return GetLastError();
+	}
+
+	bool running = true;
+	while (running)
+	{
+		MSG msg = {};
+		while (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT) running = false;
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+		}
+
+		FLOAT backgroundColor[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
+		d3d11DeviceContext->ClearRenderTargetView(d3d11framebufferRenderTarget, backgroundColor);
+		d3d11SwapChain->Present(1, 0);
+	}
+
+	return 0;
 }
