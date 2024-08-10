@@ -1,14 +1,26 @@
+#pragma once
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <d3d11_1.h>
+#include "Window.h"
 
 namespace Picayune
 {
-	struct Win32WindowParams
+	class D3D11Window : public Window
 	{
-		LRESULT(CALLBACK* windowProc)(HWND, UINT, WPARAM, LPARAM);
-		HINSTANCE hInstance;
-		LPCWSTR windowName;
+	private:
+		ID3D11Device1* m_d3d11Device = nullptr;
+		ID3D11DeviceContext1* m_d3d11DeviceContext = nullptr;
+		IDXGISwapChain1* m_d3d11SwapChain = nullptr;
+		ID3D11RenderTargetView* m_d3d11framebufferRenderTarget = nullptr;
+
+	public:
+		bool Init(HWND hWnd);
+		void Shutdown();
+		void ClearScreen();
+		void UpdateScreen();
+		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	};
 
 	struct CreateD3D11DeviceAndContextParams
@@ -31,8 +43,6 @@ namespace Picayune
 		ID3D11Device1* d3d11device;
 	};
 
-	bool GetWin32Window(HWND* windowHandleOut, Win32WindowParams params);
-	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	bool CreateD3D11DeviceAndContext(ID3D11Device1** d3d11DeviceOut,
 		ID3D11DeviceContext1** d3d11DeviceContextOut, CreateD3D11DeviceAndContextParams params);
 	bool CreateD3D11SwapChain(IDXGISwapChain1** d3d11SwapChainOut, CreateD3D11SwapChainParams params);

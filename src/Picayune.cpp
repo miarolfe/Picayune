@@ -3,54 +3,84 @@
 #endif 
 
 #include <windows.h>
+#include "Win32Window.h"
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_win32.h"
+#include "Window.h"
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+#ifdef DX11_BUILD
+#include "D3D11Window.h"
+#include "imgui/backends/imgui_impl_dx11.h"
+#endif
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
+#ifdef DX12_BUILD
+#include "imgui/backends/imgui_impl_dx12.h"
+#endif
+
+#ifdef OPENGL_BUILD
+#include <GL/GL.h>
+#include "imgui/backends/imgui_impl_opengl3.h"
+#endif
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nShowCmd*/)
 {
-	// Register the window class.
-	const wchar_t CLASS_NAME[] = L"Picayune Window Class";
+	ImGui_ImplWin32_EnableDpiAwareness();
 
-	WNDCLASS wc = { };
+#ifdef DX11_BUILD
+	Picayune::D3D11Window window;
+#endif
 
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = hInstance;
-	wc.lpszClassName = CLASS_NAME;
+#ifndef DX11_BUILD
+	Picayune::Window window;
+#endif
 
-	RegisterClass(&wc);
-
-	// Create the window.
-
-	HWND hwnd = CreateWindowEx(
-		0,                              // Optional window styles.
-		CLASS_NAME,                     // Window class
-		L"Picayune",					// Window text
-		WS_OVERLAPPEDWINDOW,            // Window style
-
-		// Size and position
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-
-		NULL,       // Parent window    
-		NULL,       // Menu
-		hInstance,  // Instance handle
-		NULL        // Additional application data
-	);
-
-	if (hwnd == NULL)
+	Picayune::Win32WindowParams windowParams =
 	{
-		return 0;
+		&window.WindowProc,
+		L"Picayune",
+		hInstance,
+		&window
+	};
+
+	HWND hWnd;
+	if (!Picayune::GetWin32Window(&hWnd, windowParams))
+	{
+		MessageBoxW(0, L"Failed to create window", L"Fatal Error", MB_OK);
+		return GetLastError();
 	}
 
-	ShowWindow(hwnd, nCmdShow);
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(hWnd);
 
-	// Run the message loop.
-
-	MSG msg = { };
-	while (GetMessage(&msg, NULL, 0, 0) > 0)
+	window.Init(hWnd);
+	
+	bool running = true;
+	while (running)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		MSG msg = {};
+		while (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT) running = false;
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+		}
+
+		window.ClearScreen();
+
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+		ImGui::ShowDemoWindow();
+		ImGui::Render();
+		
+		window.UpdateScreen();
 	}
+
+	window.Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 
 	return 0;
 }

@@ -23,55 +23,100 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 namespace Picayune
 {
-	bool GetWin32Window(HWND* windowHandleOut, Win32WindowParams params)
+	bool D3D11Window::Init(HWND hWnd)
 	{
-		WNDCLASSEXW winClass = {};
-		winClass.cbSize = sizeof(WNDCLASSEXW);
-		winClass.style = CS_HREDRAW | CS_VREDRAW;
-		winClass.lpfnWndProc = params.windowProc;
-		winClass.hInstance = params.hInstance;
-		winClass.hIcon = LoadIconW(0, IDI_APPLICATION);
-		winClass.hCursor = LoadCursorW(0, IDC_ARROW);
-		winClass.lpszClassName = L"WindowClass";
-		winClass.hIconSm = LoadIconW(0, IDI_APPLICATION);
+		Picayune::CreateD3D11DeviceAndContextParams d3d11DeviceAndContextParams;
+		d3d11DeviceAndContextParams.creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#if defined(DEBUG)
+		d3d11DeviceAndContextParams.creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+		D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+		d3d11DeviceAndContextParams.featureLevels = featureLevels;
+		d3d11DeviceAndContextParams.numFeatureLevels = 1;
 
-		if (!RegisterClassExW(&winClass))
+		if (!Picayune::CreateD3D11DeviceAndContext(&m_d3d11Device, &m_d3d11DeviceContext, d3d11DeviceAndContextParams))
 		{
+			MessageBoxW(0, L"Failed to create D3D11 device and context", L"Fatal Error", MB_OK);
 			return false;
 		}
 
-		RECT initialRect = { 0, 0, 2560, 1440 };
-		AdjustWindowRectEx(&initialRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_OVERLAPPEDWINDOW);
-		LONG initialWidth = initialRect.right - initialRect.left;
-		LONG initialHeight = initialRect.bottom - initialRect.top;
-
-		HWND hWnd = CreateWindowExW
-		(
-			WS_EX_OVERLAPPEDWINDOW,
-			winClass.lpszClassName,
-			params.windowName,
-			WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			initialWidth,
-			initialHeight,
-			0,
-			0,
-			params.hInstance,
-			0
+#ifdef DEBUG
+		ID3D11Debug* d3dDebug = nullptr;
+		d3d11Device->QueryInterface(
+			__uuidof(ID3D11Debug),
+			(void**)&d3dDebug
 		);
 
-		if (!hWnd)
+		if (d3dDebug)
 		{
+			ID3D11InfoQueue* d3dInfoQueue = nullptr;
+			if (SUCCEEDED(d3dDebug->QueryInterface(
+				__uuidof(ID3D11InfoQueue),
+				(void**)&d3dInfoQueue
+			)) {
+				d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
+				d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
+				d3dInfoQueue->Release();
+			}
+			d3dDebug->Release();
+		}
+#endif
+
+		DXGI_SWAP_CHAIN_DESC1 d3d11SwapChainDesc = {};
+		d3d11SwapChainDesc.Width = 0; // use window width
+		d3d11SwapChainDesc.Height = 0; // use window height
+		d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+		d3d11SwapChainDesc.SampleDesc.Count = 1;
+		d3d11SwapChainDesc.SampleDesc.Quality = 0;
+		d3d11SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		d3d11SwapChainDesc.BufferCount = 2;
+		d3d11SwapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+		d3d11SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		d3d11SwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+		d3d11SwapChainDesc.Flags = 0;
+
+		Picayune::CreateD3D11SwapChainParams d3d11SwapChainParams;
+		d3d11SwapChainParams.device = m_d3d11Device;
+		d3d11SwapChainParams.hWnd = hWnd;
+		d3d11SwapChainParams.desc = d3d11SwapChainDesc;
+		if (!CreateD3D11SwapChain(&m_d3d11SwapChain, d3d11SwapChainParams))
+		{
+			MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
 			return false;
 		}
 
-		*windowHandleOut = hWnd;
-		return true;
+		Picayune::CreateD3D11FramebufferRenderTargetParams d3d11FramebufferRenderTargetParams;
+		d3d11FramebufferRenderTargetParams.swapChain = m_d3d11SwapChain;
+		d3d11FramebufferRenderTargetParams.d3d11device = m_d3d11Device;
+		if (!Picayune::CreateD3D11FramebufferRenderTarget(&m_d3d11framebufferRenderTarget, d3d11FramebufferRenderTargetParams))
+		{
+			MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
+			return false;
+		}
+
+		ImGui_ImplDX11_Init(m_d3d11Device, m_d3d11DeviceContext);
 	}
 
+	void D3D11Window::Shutdown() 
+	{
+		ImGui_ImplDX11_Shutdown();
+	}
 
-	LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
+	void D3D11Window::ClearScreen()
+	{
+		ImGui_ImplDX11_NewFrame();
+		FLOAT backgroundColor[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
+		m_d3d11DeviceContext->OMSetRenderTargets(1, &m_d3d11framebufferRenderTarget, nullptr);
+		m_d3d11DeviceContext->ClearRenderTargetView(m_d3d11framebufferRenderTarget, backgroundColor);
+	}
+
+	void D3D11Window::UpdateScreen()
+	{
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		m_d3d11SwapChain->Present(1, 0);
+	}
+
+	LRESULT CALLBACK D3D11Window::WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wparam, lparam))
 			return true;
@@ -80,6 +125,10 @@ namespace Picayune
 
 		switch (msg)
 		{
+		case WM_SIZE:
+		{
+			break;
+		}
 		case WM_KEYDOWN:
 		{
 			if (wparam == VK_ESCAPE) PostQuitMessage(0);
@@ -228,132 +277,3 @@ namespace Picayune
 	}
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nShowCmd*/)
-{
-	ImGui_ImplWin32_EnableDpiAwareness();
-	
-	Picayune::Win32WindowParams windowParams =
-	{
-		&Picayune::WindowProc,
-		hInstance,
-		L"PicayuneD3D11"
-	};
-
-	HWND hWnd;
-	if (!Picayune::GetWin32Window(&hWnd, windowParams))
-	{
-		MessageBoxW(0, L"Failed to create window", L"Fatal Error", MB_OK);
-		return GetLastError();
-	}
-
-	ID3D11Device1* d3d11Device = nullptr;
-	ID3D11DeviceContext1* d3d11DeviceContext = nullptr;
-	IDXGISwapChain1* d3d11SwapChain = nullptr;
-	ID3D11RenderTargetView* d3d11framebufferRenderTarget = nullptr;
-
-	Picayune::CreateD3D11DeviceAndContextParams d3d11DeviceAndContextParams;
-	d3d11DeviceAndContextParams.creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-#if defined(DEBUG_BUILD)
-	d3d11DeviceAndContextParams.creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
-	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-	d3d11DeviceAndContextParams.featureLevels = featureLevels;
-	d3d11DeviceAndContextParams.numFeatureLevels = 1;
-
-	if (!Picayune::CreateD3D11DeviceAndContext(&d3d11Device, &d3d11DeviceContext, d3d11DeviceAndContextParams))
-	{
-		MessageBoxW(0, L"Failed to create D3D11 device and context", L"Fatal Error", MB_OK);
-		return GetLastError();
-	}
-
-#ifdef DEBUG_BUILD
-	ID3D11Debug* d3dDebug = nullptr;
-	d3d11Device->QueryInterface(
-		__uuidof(ID3D11Debug),
-		(void**)&d3dDebug
-	);
-
-	if (d3dDebug)
-	{
-		ID3D11InfoQueue* d3dInfoQueue = nullptr;
-		if (SUCCEEDED(d3dDebug->QueryInterface(
-			__uuidof(ID3D11InfoQueue),
-			(void**)&d3dInfoQueue
-		)) {
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
-			d3dInfoQueue->Release();
-		}
-		d3dDebug->Release();
-	}
-#endif
-
-	DXGI_SWAP_CHAIN_DESC1 d3d11SwapChainDesc = {};
-	d3d11SwapChainDesc.Width = 0; // use window width
-	d3d11SwapChainDesc.Height = 0; // use window height
-	d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-	d3d11SwapChainDesc.SampleDesc.Count = 1;
-	d3d11SwapChainDesc.SampleDesc.Quality = 0;
-	d3d11SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	d3d11SwapChainDesc.BufferCount = 2;
-	d3d11SwapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-	d3d11SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	d3d11SwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-	d3d11SwapChainDesc.Flags = 0;
-
-	Picayune::CreateD3D11SwapChainParams d3d11SwapChainParams;
-	d3d11SwapChainParams.device = d3d11Device;
-	d3d11SwapChainParams.hWnd = hWnd;
-	d3d11SwapChainParams.desc = d3d11SwapChainDesc;
-	if (!CreateD3D11SwapChain(&d3d11SwapChain, d3d11SwapChainParams))
-	{
-		MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
-		return GetLastError();
-	}
-
-	Picayune::CreateD3D11FramebufferRenderTargetParams d3d11FramebufferRenderTargetParams;
-	d3d11FramebufferRenderTargetParams.swapChain = d3d11SwapChain;
-	d3d11FramebufferRenderTargetParams.d3d11device = d3d11Device;
-	if (!Picayune::CreateD3D11FramebufferRenderTarget(&d3d11framebufferRenderTarget, d3d11FramebufferRenderTargetParams))
-	{
-		MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
-		return GetLastError();
-	}
-
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(hWnd);
-	ImGui_ImplDX11_Init(d3d11Device, d3d11DeviceContext);
-
-	bool running = true;
-	while (running)
-	{
-		MSG msg = {};
-		while (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT) running = false;
-			TranslateMessage(&msg);
-			DispatchMessageW(&msg);
-		}
-
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-		ImGui::ShowDemoWindow();
-		ImGui::Render();
-
-		FLOAT backgroundColor[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
-		d3d11DeviceContext->OMSetRenderTargets(1, &d3d11framebufferRenderTarget, nullptr);
-		d3d11DeviceContext->ClearRenderTargetView(d3d11framebufferRenderTarget, backgroundColor);
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-		d3d11SwapChain->Present(1, 0);
-	}
-
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-
-	return 0;
-}
