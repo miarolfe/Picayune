@@ -29,7 +29,6 @@ set(IMGUI_SOURCE
     vendor/imgui/imgui_demo.cpp
     vendor/imgui/imgui_draw.cpp
     vendor/imgui/backends/imgui_impl_win32.cpp
-    vendor/imgui/backends/imgui_impl_dx11.cpp
     vendor/imgui/imgui_tables.cpp
     vendor/imgui/imgui_widgets.cpp
 )
@@ -38,16 +37,49 @@ set(IMGUI_HEADERS
     vendor/imgui/imconfig.h
     vendor/imgui/imgui.h
     vendor/imgui/backends/imgui_impl_win32.h
-    vendor/imgui/backends/imgui_impl_dx11.h
     vendor/imgui/imgui_internal.h
     vendor/imgui/imstb_rectpack.h
     vendor/imgui/imstb_textedit.h
     vendor/imgui/imstb_truetype.h
 )
 
-add_executable(PicayuneDX11 "src/Picayune.cpp" "src/D3D11Window.cpp" "src/D3D11Window.h" "src/Window.h" "src/Win32Window.cpp" "src/Win32Window.h" ${IMGUI_SOURCE} ${IMGUI_HEADERS} "src/Win32Window.h")
-add_executable(PicayuneDX12 "src/Picayune.cpp" ${IMGUI_SOURCE} ${IMGUI_HEADERS} "src/Win32Window.h")
-add_executable(PicayuneOpenGL "src/Picayune.cpp" ${IMGUI_SOURCE} ${IMGUI_HEADERS} "src/Win32Window.h")
+set(CORE_SOURCE
+	src/Picayune.cpp
+	src/Win32Window.cpp
+)
+
+set(CORE_HEADERS
+	src/Picayune.h
+	src/Window.h
+	src/Win32Window.h
+)
+
+set(D3D11_SOURCE
+	src/D3D11Window.cpp
+	vendor/imgui/backends/imgui_impl_dx11.cpp
+)
+
+set(D3D11_HEADERS
+	src/D3D11Window.h
+	vendor/imgui/backends/imgui_impl_dx11.h
+)
+
+set(OPENGL_SOURCE
+	src/OpenGLWindow.cpp
+	src/glad.c
+	vendor/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+set(OPENGL_HEADERS
+	src/OpenGLWindow.h
+	vendor/imgui/backends/imgui_impl_opengl3.h
+	vendor/glad/glad.h
+	vendor/KHR/khrplatform.h
+)
+
+add_executable(PicayuneDX11 ${D3D11_SOURCE} ${D3D11_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS})
+add_executable(PicayuneDX12 ${IMGUI_SOURCE} ${IMGUI_HEADERS})
+add_executable(PicayuneOpenGL ${OPENGL_SOURCE} ${OPENGL_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS})
 
 target_compile_definitions(PicayuneDX11 PRIVATE DX11_BUILD)
 target_compile_definitions(PicayuneDX12 PRIVATE DX12_BUILD)

@@ -19,7 +19,7 @@ namespace Picayune
 			return false;
 		}
 
-		RECT initialRect = { 0, 0, 2560, 1440 };
+		RECT initialRect = { 0, 0, 1280, 720 };
 		AdjustWindowRectEx(&initialRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_OVERLAPPEDWINDOW);
 		LONG initialWidth = initialRect.right - initialRect.left;
 		LONG initialHeight = initialRect.bottom - initialRect.top;

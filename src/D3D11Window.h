@@ -10,6 +10,7 @@ namespace Picayune
 	class D3D11Window : public Window
 	{
 	private:
+		HWND m_hWnd;
 		ID3D11Device1* m_d3d11Device = nullptr;
 		ID3D11DeviceContext1* m_d3d11DeviceContext = nullptr;
 		IDXGISwapChain1* m_d3d11SwapChain = nullptr;
@@ -17,9 +18,12 @@ namespace Picayune
 
 	public:
 		bool Init(HWND hWnd);
+		bool InitDebugUI();
 		void Shutdown();
+		void ShutdownDebugUI();
 		void ClearScreen();
 		void UpdateScreen();
+		void UpdateDebugUI();
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	};
 
@@ -48,4 +52,8 @@ namespace Picayune
 	bool CreateD3D11SwapChain(IDXGISwapChain1** d3d11SwapChainOut, CreateD3D11SwapChainParams params);
 	bool CreateD3D11FramebufferRenderTarget(ID3D11RenderTargetView** d3d11FramebufferRenderTargetOut, 
 		CreateD3D11FramebufferRenderTargetParams params);
+
+	void DestroyD3D11DeviceAndContext(ID3D11Device1* device, ID3D11DeviceContext1* deviceContext);
+	void DestroyD3D11SwapChain(IDXGISwapChain1* swapChain);
+	void DestroyD3D11FramebufferRenderTarget(ID3D11RenderTargetView* framebufferRenderTarget);
 }

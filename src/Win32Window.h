@@ -7,10 +7,10 @@ namespace Picayune
 {
 	struct Win32WindowParams
 	{
+		Window* window;
 		LRESULT(CALLBACK* windowProc)(HWND, UINT, WPARAM, LPARAM);
 		LPCWSTR windowName;
 		HINSTANCE hInstance;
-		Window* window;
 	};
 
 	bool GetWin32Window(HWND* windowHandleOut, Win32WindowParams params);

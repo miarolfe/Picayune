@@ -25,6 +25,8 @@ namespace Picayune
 {
 	bool D3D11Window::Init(HWND hWnd)
 	{
+		m_hWnd = hWnd;
+
 		Picayune::CreateD3D11DeviceAndContextParams d3d11DeviceAndContextParams;
 		d3d11DeviceAndContextParams.creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #if defined(DEBUG)
@@ -77,7 +79,7 @@ namespace Picayune
 
 		Picayune::CreateD3D11SwapChainParams d3d11SwapChainParams;
 		d3d11SwapChainParams.device = m_d3d11Device;
-		d3d11SwapChainParams.hWnd = hWnd;
+		d3d11SwapChainParams.hWnd = m_hWnd;
 		d3d11SwapChainParams.desc = d3d11SwapChainDesc;
 		if (!CreateD3D11SwapChain(&m_d3d11SwapChain, d3d11SwapChainParams))
 		{
@@ -92,19 +94,40 @@ namespace Picayune
 		{
 			MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
 			return false;
-		}
+		}	
+	}
 
-		ImGui_ImplDX11_Init(m_d3d11Device, m_d3d11DeviceContext);
+	bool D3D11Window::InitDebugUI()
+	{
+		ImGui_ImplWin32_EnableDpiAwareness();
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::StyleColorsDark();
+
+		if (!ImGui_ImplDX11_Init(m_d3d11Device, m_d3d11DeviceContext)) return false;
+		if (!ImGui_ImplWin32_Init(m_hWnd)) return false;
+
+		return true;
 	}
 
 	void D3D11Window::Shutdown() 
 	{
+		DestroyD3D11FramebufferRenderTarget(m_d3d11framebufferRenderTarget);
+		DestroyD3D11SwapChain(m_d3d11SwapChain);
+		DestroyD3D11DeviceAndContext(m_d3d11Device, m_d3d11DeviceContext);
+	}
+
+	void D3D11Window::ShutdownDebugUI()
+	{
+		ImGui_ImplWin32_Shutdown();
 		ImGui_ImplDX11_Shutdown();
+
 	}
 
 	void D3D11Window::ClearScreen()
 	{
-		ImGui_ImplDX11_NewFrame();
 		FLOAT backgroundColor[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
 		m_d3d11DeviceContext->OMSetRenderTargets(1, &m_d3d11framebufferRenderTarget, nullptr);
 		m_d3d11DeviceContext->ClearRenderTargetView(m_d3d11framebufferRenderTarget, backgroundColor);
@@ -114,6 +137,15 @@ namespace Picayune
 	{
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 		m_d3d11SwapChain->Present(1, 0);
+	}
+
+	void D3D11Window::UpdateDebugUI()
+	{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+		ImGui::ShowDemoWindow();
+		ImGui::Render();
 	}
 
 	LRESULT CALLBACK D3D11Window::WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -269,6 +301,17 @@ namespace Picayune
 		*d3d11FramebufferRenderTargetOut = d3d11FramebufferRenderTarget;
 
 		return true;
+	}
+
+	void DestroyD3D11DeviceAndContext(ID3D11Device1* device, ID3D11DeviceContext1* deviceContext)
+	{
+		device->Release();
+		deviceContext->Release();
+	}
+
+	void DestroyD3D11SwapChain(IDXGISwapChain1* swapChain)
+	{
+		swapChain->Release();
 	}
 
 	void DestroyD3D11FramebufferRenderTarget(ID3D11RenderTargetView* framebufferRenderTarget)
