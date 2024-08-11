@@ -88,11 +88,6 @@ namespace Picayune
 		}
 	}
 
-	bool OpenGLWindow::LoadModels(Model* models, int numModels)
-	{
-		return true;
-	}
-
 	LRESULT CALLBACK OpenGLWindow::WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wparam, lparam))

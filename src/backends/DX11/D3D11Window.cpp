@@ -184,9 +184,14 @@ namespace Picayune
 		}
 	}
 
-	bool D3D11Window::LoadModels(Model* models, int numModels)
+	void* D3D11Window::GetDevice()
 	{
-		return true;
+		return (void*) m_d3d11Device;
+	}
+
+	ID3D11Device1* D3D11Window::GetD3DDevice()
+	{
+		return m_d3d11Device;
 	}
 
 	LRESULT CALLBACK D3D11Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -22,5 +22,5 @@ namespace Picayune
 		D3D11_SUBRESOURCE_DATA data;
 	};
 
-	static bool CreateD3D11IndexBuffer(D3D11IndexBuffer** indexBufferOut, CreateD3D11IndexBufferParams params);
+	bool CreateD3D11IndexBuffer(D3D11IndexBuffer** indexBufferOut, CreateD3D11IndexBufferParams params);
 }

@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "D3D11VertexBuffer.h"
 
 namespace Picayune
@@ -9,21 +10,23 @@ namespace Picayune
 
 	void D3D11VertexBuffer::SetBuffer(void* buffer)
 	{
-		if (buffer)
-		{
-			m_buffer = (ID3D11Buffer*) buffer;
-		}
+		return;
+
+		//if (buffer)
+		//{
+		//	m_buffer = (ID3D11Buffer*) buffer;
+		//}
 	}
 
-	bool CreateD3D11VertexBufffer(D3D11VertexBuffer** vertexBufferOut, CreateD3D11VertexBufferParams params)
+	bool CreateD3D11VertexBuffer(D3D11VertexBuffer** vertexBufferOut, CreateD3D11VertexBufferParams params)
 	{
-		D3D11VertexBuffer* vertexBuffer = (D3D11VertexBuffer*) malloc(sizeof(D3D11VertexBuffer));
-		ID3D11Buffer* buffer = nullptr;
-
+		D3D11VertexBuffer* vertexBuffer = new D3D11VertexBuffer(); // (D3D11VertexBuffer*) malloc(sizeof(D3D11VertexBuffer));
 		if (!vertexBuffer)
 		{
 			return false;
 		}
+
+		ID3D11Buffer* buffer = nullptr;
 
 		HRESULT hResult;
 		hResult = params.device->CreateBuffer(&params.desc, &params.data, &buffer);

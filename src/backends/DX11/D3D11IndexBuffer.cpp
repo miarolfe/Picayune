@@ -17,7 +17,7 @@ namespace Picayune
 
 	bool CreateD3D11IndexBuffer(D3D11IndexBuffer** indexBufferOut, CreateD3D11IndexBufferParams params)
 	{
-		D3D11IndexBuffer* indexBuffer = (D3D11IndexBuffer*) malloc(sizeof(D3D11IndexBuffer));
+		D3D11IndexBuffer* indexBuffer = new D3D11IndexBuffer(); // (D3D11IndexBuffer*) malloc(sizeof(D3D11IndexBuffer));
 		ID3D11Buffer* buffer = nullptr;
 
 		if (!indexBuffer)

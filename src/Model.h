@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Mesh.h"
+#include "Window.h"
 
 namespace Picayune
 {
@@ -21,6 +22,7 @@ namespace Picayune
 	{
 		const char* filepath;
 		unsigned int importerFlags;
+		Window* window;
 	};
 
 	bool CreateModel(Model** modelOut, CreateModelParams params);

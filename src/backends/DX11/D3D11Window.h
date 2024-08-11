@@ -26,7 +26,8 @@ namespace Picayune
 		void UpdateScreen();
 		void UpdateDebugUI();
 		void OnResize();
-		bool LoadModels(Model* models, int numModels);
+		void* GetDevice();
+		ID3D11Device1* GetD3DDevice();
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	};
 

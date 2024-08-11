@@ -102,7 +102,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 	Picayune::CreateModelParams modelParams =
 	{
 		"assets/sphere.fbx",
-		aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
+		aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace,
+		(Picayune::Window*) &window
 	};
 	if (!Picayune::CreateModel(&model, modelParams))
 	{
@@ -126,9 +127,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 
 		ImGui::Begin("Test", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
 		ImGui::Text("Test");
-		glm::vec3 vertexPos = model->GetMesh(0).vertices[0].position;
-		ImGui::Text("%f %f %f", vertexPos.x, vertexPos.y, vertexPos.z);
-		ImGui::Text("%d %d %d", model->GetMesh(0).indices[0], model->GetMesh(0).indices[100], model->GetMesh(0).indices[2]);
 		ImGui::End();
 
 		window.UpdateDebugUI();

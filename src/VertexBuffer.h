@@ -5,7 +5,7 @@ namespace Picayune
 	class VertexBuffer
 	{
 	public:
-		virtual void* GetBuffer() { };
+		virtual void* GetBuffer() { return nullptr; };
 		virtual void SetBuffer(void* buffer) { };
 	};
 }

@@ -23,7 +23,6 @@ namespace Picayune
 		void UpdateScreen();
 		void UpdateDebugUI();
 		void OnResize();
-		bool LoadModels(Model* models, int numModels);
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	private:

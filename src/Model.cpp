@@ -65,7 +65,8 @@ namespace Picayune
 			CreateMeshParams meshParams =
 			{
 				rawMesh,
-				rawScene
+				rawScene,
+				params.window
 			};
 			if (!CreateMesh(&mesh, meshParams))
 			{

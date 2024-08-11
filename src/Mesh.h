@@ -7,6 +7,7 @@
 #include "Vertex.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Window.h"
 
 #ifdef DX11_BUILD
 #include "backends/DX11/D3D11VertexBuffer.h"
@@ -28,8 +29,7 @@ namespace Picayune
 	struct Mesh
 	{
 		VertexBuffer* vertexBuffer = nullptr;
-		Vertex* vertices = nullptr;
-		unsigned int* indices = nullptr;
+		IndexBuffer* indexBuffer = nullptr;
 		Texture* textures = nullptr;
 	};
 
@@ -37,6 +37,7 @@ namespace Picayune
 	{
 		aiMesh* rawMesh;
 		const aiScene* rawScene;
+		Window* window;
 	};
 
 	bool CreateMesh(Mesh** meshOut, CreateMeshParams params);

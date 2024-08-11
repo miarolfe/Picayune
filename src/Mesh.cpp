@@ -5,22 +5,24 @@
 #include "glm/glm.hpp"
 #include "Mesh.h"
 #include "Vertex.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 #ifdef DX11_BUILD
 #include "backends/DX11/D3D11VertexBuffer.h"
+#include "backends/DX11/D3D11IndexBuffer.h"
+#include "backends/DX11/D3D11Window.h"
 #endif
 
-#ifndef DX11_BUILD
-#include "VertexBuffer.h"
+#ifdef DX12_BUILD
+#include "backends/DX12/D3D12VertexBuffer.h"
+#include "backends/DX12/D3D12IndexBuffer.h"
 #endif
 
-//#ifdef DX12_BUILD
-//#include "D3D12Window.h"
-//#endif
-//
-//#ifdef OPENGL_BUILD
-//#include "OpenGLWindow.h"
-//#endif
+#ifdef OPENGL_BUILD
+#include "backends/OpenGL/OpenGLVertexBuffer.h"
+#include "backends/OpenGL/OpenGLIndexBuffer.h"
+#endif
 
 namespace Picayune
 {
@@ -46,8 +48,8 @@ namespace Picayune
 			numIndices += params.rawMesh->mFaces[i].mNumIndices;
 		}
 
-		mesh->indices = (unsigned int*) malloc(numIndices * sizeof(unsigned int));
-		if (!mesh->indices)
+		unsigned int* indices = (unsigned int*) malloc(numIndices * sizeof(unsigned int));
+		if (!indices)
 		{
 			return false;
 		}
@@ -87,8 +89,6 @@ namespace Picayune
 			vertices[i] = vertex;
 		}
 
-		mesh->vertices = vertices;
-
 		// Load indices
 		int currentIndex = 0;
 		for (int i = 0; i < params.rawMesh->mNumFaces; i++)
@@ -96,12 +96,83 @@ namespace Picayune
 			aiFace face = params.rawMesh->mFaces[i];
 			for (int j = 0; j < face.mNumIndices; j++)
 			{
-				mesh->indices[currentIndex++] = face.mIndices[j];
+				indices[currentIndex++] = face.mIndices[j];
 			}
 		}
 
 		// TODO: Load materials and get mat count
 		mesh->textures = nullptr;
+
+#ifdef DX11_BUILD
+		D3D11Window* window = (D3D11Window*) params.window;
+		ID3D11Device1* device = window->GetD3DDevice();
+		// ID3D11Device1* device = (ID3D11Device1*) params.window->GetDevice();
+
+		D3D11VertexBuffer* vertexBuffer;
+
+		D3D11_BUFFER_DESC vertexBufferDesc;
+		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		vertexBufferDesc.ByteWidth = numVertices * sizeof(Vertex);
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.CPUAccessFlags = 0;
+		vertexBufferDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA vertexBufferData;
+		vertexBufferData.pSysMem = vertices;
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+
+		CreateD3D11VertexBufferParams vertexBufferParams =
+		{
+			device,
+			vertexBufferDesc,
+			vertexBufferData
+		};
+
+		if (!CreateD3D11VertexBuffer(&vertexBuffer, vertexBufferParams))
+		{
+			return false;
+		}
+		
+
+		D3D11IndexBuffer* indexBuffer;
+
+		D3D11_BUFFER_DESC indexBufferDesc;
+		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		indexBufferDesc.ByteWidth = numIndices * sizeof(unsigned int);
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		indexBufferDesc.CPUAccessFlags = 0;
+		indexBufferDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA indexBufferData;
+		indexBufferData.pSysMem = indices;
+		indexBufferData.SysMemPitch = 0;
+		indexBufferData.SysMemSlicePitch = 0;
+
+		CreateD3D11IndexBufferParams indexBufferParams =
+		{
+			device,
+			indexBufferDesc,
+			indexBufferData
+		};
+
+		if (!CreateD3D11IndexBuffer(&indexBuffer, indexBufferParams))
+		{
+			return false;
+		}
+
+		mesh->vertexBuffer = vertexBuffer;
+		mesh->indexBuffer = indexBuffer;
+		
+#endif
+
+#ifdef DX12_BUILD
+#endif
+
+#ifdef OPENGL_BUILD
+#endif
+		free(vertices);
+		free(indices);
 
 		*meshOut = mesh;
 
@@ -110,9 +181,9 @@ namespace Picayune
 
 	void DestroyMesh(Mesh* mesh)
 	{
+		// TODO: NOT FINISHED!!!
 		if (mesh->vertexBuffer) free(mesh->vertexBuffer);
-		if (mesh->vertices) free(mesh->vertices);
-		if (mesh->indices) free(mesh->indices);
+		if (mesh->indexBuffer) free(mesh->indexBuffer);
 		if (mesh->textures) free(mesh->textures);
 		if (mesh) free(mesh);
 	}
