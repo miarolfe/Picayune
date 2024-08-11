@@ -21,6 +21,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nShowCmd*/)
 {
+	SetProcessDPIAware();
 
 #ifdef DX11_BUILD
 	Picayune::D3D11Window window;
