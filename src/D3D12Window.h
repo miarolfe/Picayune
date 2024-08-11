@@ -19,8 +19,10 @@ namespace Picayune
 		void Shutdown();
 		void ShutdownDebugUI();
 		void ClearScreen();
+		void ClearDebugUI();
 		void UpdateScreen();
 		void UpdateDebugUI();
+		void OnResize();
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	};
 }

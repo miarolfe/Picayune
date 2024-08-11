@@ -10,7 +10,7 @@ namespace Picayune
 	class D3D11Window : public Window
 	{
 	private:
-		HWND m_hWnd;
+		HWND m_hWnd = nullptr;
 		ID3D11Device1* m_d3d11Device = nullptr;
 		ID3D11DeviceContext1* m_d3d11DeviceContext = nullptr;
 		IDXGISwapChain1* m_d3d11SwapChain = nullptr;
@@ -22,6 +22,7 @@ namespace Picayune
 		void Shutdown();
 		void ShutdownDebugUI();
 		void ClearScreen();
+		void ClearDebugUI();
 		void UpdateScreen();
 		void UpdateDebugUI();
 		void OnResize();

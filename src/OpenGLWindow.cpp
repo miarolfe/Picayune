@@ -58,6 +58,13 @@ namespace Picayune
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
+	void OpenGLWindow::ClearDebugUI()
+	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+	}
+
 	void OpenGLWindow::UpdateScreen()
 	{
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -66,10 +73,6 @@ namespace Picayune
 
 	void OpenGLWindow::UpdateDebugUI()
 	{
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-		ImGui::ShowDemoWindow();
 		ImGui::Render();
 	}
 

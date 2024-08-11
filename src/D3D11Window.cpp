@@ -136,6 +136,13 @@ namespace Picayune
 		m_d3d11DeviceContext->ClearRenderTargetView(m_d3d11framebufferRenderTarget, backgroundColor);
 	}
 
+	void D3D11Window::ClearDebugUI()
+	{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+	}
+
 	void D3D11Window::UpdateScreen()
 	{
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -143,11 +150,7 @@ namespace Picayune
 	}
 
 	void D3D11Window::UpdateDebugUI()
-	{
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-		ImGui::ShowDemoWindow();
+	{		
 		ImGui::Render();
 	}
 

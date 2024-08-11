@@ -34,3 +34,6 @@
 .vs
 vs
 out
+
+!assets/*.obj
+!assets/**/*.obj

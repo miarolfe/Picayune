@@ -19,6 +19,7 @@ namespace Picayune
 		void Shutdown();
 		void ShutdownDebugUI();
 		void ClearScreen();
+		void ClearDebugUI();
 		void UpdateScreen();
 		void UpdateDebugUI();
 		void OnResize();

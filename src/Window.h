@@ -11,7 +11,8 @@ namespace Picayune
 		virtual bool InitDebugUI() { return true; };
 		virtual void Shutdown() { };
 		virtual void ShutdownDebugUI() { };
-		virtual void ClearScreen() { } ;
+		virtual void ClearScreen() { };
+		virtual void ClearDebugUI() { };
 		virtual void UpdateScreen() { };
 		virtual void UpdateDebugUI() { };
 		virtual void OnResize() { };

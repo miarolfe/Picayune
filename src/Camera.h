@@ -16,8 +16,8 @@ namespace Picayune
 		float m_nearPlane;
 		float m_farPlane;
 
-	// Derived values
 	private:
+		// Derived values
 		glm::vec3 m_front;
 		glm::vec3 m_up;
 		glm::vec3 m_right;
@@ -35,6 +35,7 @@ namespace Picayune
 		float GetFarPlane();
 
 	public:
+		// Derived values
 		glm::vec3 GetFront();
 		glm::vec3 GetUp();
 		glm::vec3 GetRight();

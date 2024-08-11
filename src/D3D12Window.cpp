@@ -51,6 +51,11 @@ namespace Picayune
 
 	}
 
+	void D3D12Window::OnResize()
+	{
+
+	}
+
 	LRESULT CALLBACK D3D12Window::WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wparam, lparam))

@@ -8,10 +8,13 @@ endif()
 
 project("Picayune")
 
-set(ASSIMP_BUILD_STATIC_LIB ON)
-set(ASSIMP_BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS OFF)
+set(ASSIMP_INSTALL OFF)
+set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_NO_EXPORT ON)
+set(ASSIMP_BUILD_IFC_IMPORTER OFF)
 add_subdirectory(vendor/assimp)
+
 # add_subdirectory(vendor/EAAssert)
 # add_subdirectory(vendor/EAStdC)
 # add_subdirectory(vendor/EASTL)
@@ -27,7 +30,9 @@ set (ASSIMP_LIBRARIES
 )
 
 set (ASSIMP_HEADERS
-	
+	vendor/assimp/include/assimp/scene.h
+	vendor/assimp/include/assimp/Importer.hpp
+	vendor/assimp/include/assimp/postprocess.h
 )
 
 set(EA_LIBRARIES
@@ -65,6 +70,8 @@ set(CORE_SOURCE
 	src/Picayune.cpp
 	src/Win32Window.cpp
 	src/Camera.cpp
+	src/Mesh.cpp
+	src/Model.cpp
 )
 
 set(CORE_HEADERS
@@ -72,6 +79,10 @@ set(CORE_HEADERS
 	src/Window.h
 	src/Win32Window.h
 	src/Camera.h
+	src/Vertex.h
+	src/Texture.h
+	src/Mesh.h
+	src/Model.h
 )
 
 set(D3D11_SOURCE
@@ -119,13 +130,28 @@ target_include_directories(PicayuneDX11 PRIVATE vendor/ vendor/assimp/include ve
 target_include_directories(PicayuneDX12 PRIVATE vendor/ vendor/assimp/include vendor/imgui vendor/glm)
 target_include_directories(PicayuneOpenGL PRIVATE vendor/ vendor/assimp/include vendor/imgui vendor/glm)
 
-target_link_libraries(PicayuneDX11 d3d11 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES}) # ${EA_LIBRARIES} )
-target_link_libraries(PicayuneDX12 d3d12 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES}) # ${EA_LIBRARIES} )
-target_link_libraries(PicayuneOpenGL opengl32 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES}) # ${EA_LIBRARIES} )
+target_link_libraries(PicayuneDX11 d3d11 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES})# ${EA_LIBRARIES})
+target_link_libraries(PicayuneDX12 d3d12 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES})# ${EA_LIBRARIES})
+target_link_libraries(PicayuneOpenGL opengl32 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES})# ${EA_LIBRARIES})
 
 set_target_properties(
     PicayuneDX11 PicayuneDX12 PicayuneOpenGL
     PROPERTIES
     WIN32_EXECUTABLE TRUE
     CXX_STANDARD 20
+)
+
+add_custom_command(
+	TARGET PicayuneDX11 POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_BINARY_DIR}/assets
+)
+
+add_custom_command(
+	TARGET PicayuneDX12 POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_BINARY_DIR}/assets
+)
+
+add_custom_command(
+	TARGET PicayuneOpenGL POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_BINARY_DIR}/assets
 )
