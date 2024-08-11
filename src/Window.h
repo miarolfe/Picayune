@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Model.h"
+
 namespace Picayune
 {
 	class Window
@@ -16,5 +18,7 @@ namespace Picayune
 		virtual void UpdateScreen() { };
 		virtual void UpdateDebugUI() { };
 		virtual void OnResize() { };
+		
+		virtual bool LoadModels(Model* models, int numModels) { return true; };
 	};
 }

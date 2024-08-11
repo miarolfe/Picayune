@@ -86,33 +86,45 @@ set(CORE_HEADERS
 )
 
 set(D3D11_SOURCE
-	src/D3D11Window.cpp
+	src/backends/DX11/D3D11IndexBuffer.cpp
+	src/backends/DX11/D3D11VertexBuffer.cpp
+	src/backends/DX11/D3D11Window.cpp
 	vendor/imgui/backends/imgui_impl_dx11.cpp
 )
 
 set(D3D11_HEADERS
-	src/D3D11Window.h
+	src/backends/DX11/D3D11IndexBuffer.h
+	src/backends/DX11/D3D11VertexBuffer.h
+	src/backends/DX11/D3D11Window.h
 	vendor/imgui/backends/imgui_impl_dx11.h
 )
 
 set(D3D12_SOURCE
-	src/D3D12Window.cpp
+	src/backends/DX12/D3D12IndexBuffer.cpp
+	src/backends/DX12/D3D12VertexBuffer.cpp
+	src/backends/DX12/D3D12Window.cpp
 	vendor/imgui/backends/imgui_impl_dx12.cpp
 )
 
 set(D3D12_HEADERS
-	src/D3D12Window.h
+	src/backends/DX12/D3D12IndexBuffer.h
+	src/backends/DX12/D3D12VertexBuffer.h
+	src/backends/DX12/D3D12Window.h
 	vendor/imgui/backends/imgui_impl_dx12.h
 )
 
 set(OPENGL_SOURCE
-	src/OpenGLWindow.cpp
+	src/backends/OpenGL/OpenGLIndexBuffer.cpp
+	src/backends/OpenGL/OpenGLVertexBuffer.cpp
+	src/backends/OpenGL/OpenGLWindow.cpp
 	src/glad.c
 	vendor/imgui/backends/imgui_impl_opengl3.cpp
 )
 
 set(OPENGL_HEADERS
-	src/OpenGLWindow.h
+	src/backends/OpenGL/OpenGLIndexBuffer.h
+	src/backends/OpenGL/OpenGLVertexBuffer.h
+	src/backends/OpenGL/OpenGLWindow.h
 	vendor/imgui/backends/imgui_impl_opengl3.h
 	vendor/glad/glad.h
 	vendor/KHR/khrplatform.h

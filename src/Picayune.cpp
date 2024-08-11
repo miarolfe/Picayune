@@ -10,15 +10,15 @@
 #include "Model.h"
 
 #ifdef DX11_BUILD
-#include "D3D11Window.h"
+#include "backends/DX11/D3D11Window.h"
 #endif
 
 #ifdef DX12_BUILD
-#include "D3D12Window.h"
+#include "backends/DX12/D3D12Window.h"
 #endif
 
 #ifdef OPENGL_BUILD
-#include "OpenGLWindow.h"
+#include "backends/OpenGL/OpenGLWindow.h"
 #endif
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nShowCmd*/)

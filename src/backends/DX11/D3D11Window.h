@@ -3,7 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <d3d11_1.h>
-#include "Window.h"
+#include "../../Window.h"
 
 namespace Picayune
 {
@@ -26,6 +26,7 @@ namespace Picayune
 		void UpdateScreen();
 		void UpdateDebugUI();
 		void OnResize();
+		bool LoadModels(Model* models, int numModels);
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	};
 

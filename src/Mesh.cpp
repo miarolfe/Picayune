@@ -6,6 +6,22 @@
 #include "Mesh.h"
 #include "Vertex.h"
 
+#ifdef DX11_BUILD
+#include "backends/DX11/D3D11VertexBuffer.h"
+#endif
+
+#ifndef DX11_BUILD
+#include "VertexBuffer.h"
+#endif
+
+//#ifdef DX12_BUILD
+//#include "D3D12Window.h"
+//#endif
+//
+//#ifdef OPENGL_BUILD
+//#include "OpenGLWindow.h"
+//#endif
+
 namespace Picayune
 {
 	bool CreateMesh(Mesh** meshOut, CreateMeshParams params)
@@ -18,8 +34,8 @@ namespace Picayune
 
 		int numVertices = params.rawMesh->mNumVertices;
 
-		mesh->vertices = (Vertex*) malloc(numVertices * sizeof(Vertex));
-		if (!mesh->vertices)
+		Vertex* vertices = (Vertex*) malloc(numVertices * sizeof(Vertex));
+		if (!vertices)
 		{
 			return false;
 		}
@@ -68,8 +84,10 @@ namespace Picayune
 				vertex.uv = glm::vec2(0.0f, 0.0f);
 			}
 
-			mesh->vertices[i] = vertex;
+			vertices[i] = vertex;
 		}
+
+		mesh->vertices = vertices;
 
 		// Load indices
 		int currentIndex = 0;
@@ -92,6 +110,10 @@ namespace Picayune
 
 	void DestroyMesh(Mesh* mesh)
 	{
+		if (mesh->vertexBuffer) free(mesh->vertexBuffer);
+		if (mesh->vertices) free(mesh->vertices);
+		if (mesh->indices) free(mesh->indices);
+		if (mesh->textures) free(mesh->textures);
 		if (mesh) free(mesh);
 	}
 }

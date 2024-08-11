@@ -184,6 +184,11 @@ namespace Picayune
 		}
 	}
 
+	bool D3D11Window::LoadModels(Model* models, int numModels)
+	{
+		return true;
+	}
+
 	LRESULT CALLBACK D3D11Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
