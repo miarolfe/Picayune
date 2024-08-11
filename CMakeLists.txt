@@ -64,6 +64,16 @@ set(D3D11_HEADERS
 	vendor/imgui/backends/imgui_impl_dx11.h
 )
 
+set(D3D12_SOURCE
+	src/D3D12Window.cpp
+	vendor/imgui/backends/imgui_impl_dx12.cpp
+)
+
+set(D3D12_HEADERS
+	src/D3D12Window.h
+	vendor/imgui/backends/imgui_impl_dx12.h
+)
+
 set(OPENGL_SOURCE
 	src/OpenGLWindow.cpp
 	src/glad.c
@@ -78,7 +88,7 @@ set(OPENGL_HEADERS
 )
 
 add_executable(PicayuneDX11 ${D3D11_SOURCE} ${D3D11_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS})
-add_executable(PicayuneDX12 ${IMGUI_SOURCE} ${IMGUI_HEADERS})
+add_executable(PicayuneDX12 ${D3D12_SOURCE} ${D3D12_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS})
 add_executable(PicayuneOpenGL ${OPENGL_SOURCE} ${OPENGL_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS})
 
 target_compile_definitions(PicayuneDX11 PRIVATE DX11_BUILD)

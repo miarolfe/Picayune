@@ -12,7 +12,7 @@
 #endif
 
 #ifdef DX12_BUILD
-#include "imgui/backends/imgui_impl_dx12.h"
+#include "D3D12Window.h"
 #endif
 
 #ifdef OPENGL_BUILD
@@ -25,6 +25,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 #ifdef DX11_BUILD
 	Picayune::D3D11Window window;
 	const LPCWSTR windowName = L"PicayuneDX11";
+#endif
+
+#ifdef DX12_BUILD
+	Picayune::D3D12Window window;
+	const LPCWSTR windowName = L"PicayuneDX12";
 #endif
 
 #ifdef OPENGL_BUILD
