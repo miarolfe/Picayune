@@ -83,7 +83,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		0.0f, 0.0f, -10.0f, // position
 		0.0f, 1.0f, 0.0f,	// worldUp
 		-90.0f,				// yaw
-		0.0f				// pitch
+		0.0f,				// pitch
+		45.0f,				// vertical FOV
+		16.0f / 9.0f,		// aspect ratio TODO: derive this
+		0.1f,				// near plane
+		100.0f				// far plane
 	};
 
 
