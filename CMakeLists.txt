@@ -8,14 +8,26 @@ endif()
 
 project("Picayune")
 
-add_subdirectory(vendor/EAAssert)
-add_subdirectory(vendor/EAStdC)
-add_subdirectory(vendor/EASTL)
-add_subdirectory(vendor/EAThread)
+set(ASSIMP_BUILD_STATIC_LIB ON)
+set(ASSIMP_BUILD_SHARED_LIBS OFF)
+set(ASSIMP_NO_EXPORT ON)
+add_subdirectory(vendor/assimp)
+# add_subdirectory(vendor/EAAssert)
+# add_subdirectory(vendor/EAStdC)
+# add_subdirectory(vendor/EASTL)
+# add_subdirectory(vendor/EAThread)
 add_subdirectory(vendor/glm)
 
 set (WIN32_LIBRARIES
 	user32
+)
+
+set (ASSIMP_LIBRARIES
+	assimp
+)
+
+set (ASSIMP_HEADERS
+	
 )
 
 set(EA_LIBRARIES
@@ -95,21 +107,21 @@ set(OPENGL_HEADERS
 	vendor/KHR/khrplatform.h
 )
 
-add_executable(PicayuneDX11 ${D3D11_SOURCE} ${D3D11_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS} ${GLM_HEADERS})
-add_executable(PicayuneDX12 ${D3D12_SOURCE} ${D3D12_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS} ${GLM_HEADERS})
-add_executable(PicayuneOpenGL ${OPENGL_SOURCE} ${OPENGL_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS} ${GLM_HEADERS})
+add_executable(PicayuneDX11 ${D3D11_SOURCE} ${D3D11_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS} ${GLM_HEADERS} ${ASSIMP_HEADERS} )
+add_executable(PicayuneDX12 ${D3D12_SOURCE} ${D3D12_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS} ${GLM_HEADERS} ${ASSIMP_HEADERS} )
+add_executable(PicayuneOpenGL ${OPENGL_SOURCE} ${OPENGL_HEADERS} ${CORE_SOURCE} ${CORE_HEADERS} ${IMGUI_SOURCE} ${IMGUI_HEADERS} ${GLM_HEADERS} ${ASSIMP_HEADERS} )
 
 target_compile_definitions(PicayuneDX11 PRIVATE DX11_BUILD)
 target_compile_definitions(PicayuneDX12 PRIVATE DX12_BUILD)
 target_compile_definitions(PicayuneOpenGL PRIVATE OPENGL_BUILD)
 
-target_include_directories(PicayuneDX11 PRIVATE vendor/ vendor/imgui vendor/glm)
-target_include_directories(PicayuneDX12 PRIVATE vendor/ vendor/imgui vendor/glm)
-target_include_directories(PicayuneOpenGL PRIVATE vendor/ vendor/imgui vendor/glm)
+target_include_directories(PicayuneDX11 PRIVATE vendor/ vendor/assimp/include vendor/imgui vendor/glm)
+target_include_directories(PicayuneDX12 PRIVATE vendor/ vendor/assimp/include vendor/imgui vendor/glm)
+target_include_directories(PicayuneOpenGL PRIVATE vendor/ vendor/assimp/include vendor/imgui vendor/glm)
 
-target_link_libraries(PicayuneDX11 d3d11 ${WIN32_LIBRARIES} ${EA_LIBRARIES})
-target_link_libraries(PicayuneDX12 d3d12 ${WIN32_LIBRARIES} ${EA_LIBRARIES})
-target_link_libraries(PicayuneOpenGL opengl32 ${WIN32_LIBRARIES} ${EA_LIBRARIES})
+target_link_libraries(PicayuneDX11 d3d11 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES}) # ${EA_LIBRARIES} )
+target_link_libraries(PicayuneDX12 d3d12 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES}) # ${EA_LIBRARIES} )
+target_link_libraries(PicayuneOpenGL opengl32 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES}) # ${EA_LIBRARIES} )
 
 set_target_properties(
     PicayuneDX11 PicayuneDX12 PicayuneOpenGL

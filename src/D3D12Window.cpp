@@ -16,12 +16,12 @@ namespace Picayune
 	{
 		m_hWnd = hWnd;
 
-		return false;
+		return true;
 	}
 
 	bool D3D12Window::InitDebugUI()
 	{
-		return false;
+		return true;
 	}
 
 	void D3D12Window::Shutdown()
@@ -31,7 +31,9 @@ namespace Picayune
 
 	void D3D12Window::ShutdownDebugUI()
 	{
-
+		ImGui_ImplWin32_Shutdown();
+		ImGui_ImplDX12_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	void D3D12Window::ClearScreen()
