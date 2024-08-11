@@ -6,6 +6,7 @@
 #include "Win32Window.h"
 #include "imgui/imgui.h"
 #include "Window.h"
+#include "Camera.h"
 
 #ifdef DX11_BUILD
 #include "D3D11Window.h"
@@ -57,8 +58,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		hInstance
 	};
 
-	
-
 	HWND hWnd;
 	if (!Picayune::GetWin32Window(&hWnd, windowParams))
 	{
@@ -78,6 +77,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		return 1;
 	}
 
+	Picayune::Camera* camera;
+	Picayune::CreateCameraParams cameraParams =
+	{
+		0.0f, 0.0f, -10.0f, // position
+		0.0f, 1.0f, 0.0f,	// worldUp
+		-90.0f,				// yaw
+		0.0f				// pitch
+	};
+
+
+	if (!Picayune::CreateCamera(&camera, cameraParams))
+	{
+		MessageBoxW(0, L"Failed to create camera", L"Fatal Error", MB_OK);
+		return 1;
+	}
 	
 	bool running = true;
 	while (running)
@@ -95,6 +109,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		window.UpdateScreen();
 	}
 
+	Picayune::DestroyCamera(camera);
 	window.Shutdown();
 	window.ShutdownDebugUI();
 
