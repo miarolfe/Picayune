@@ -2,7 +2,6 @@
 #define UNICODE 
 #include <windows.h>
 #include <d3d11_1.h>
-#include <assert.h>
 
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_win32.h"
