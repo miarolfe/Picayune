@@ -14,5 +14,6 @@ namespace Picayune
 		virtual void ClearScreen() { } ;
 		virtual void UpdateScreen() { };
 		virtual void UpdateDebugUI() { };
+		virtual void OnResize() { };
 	};
 }

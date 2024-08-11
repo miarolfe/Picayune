@@ -22,6 +22,7 @@ namespace Picayune
 		void ClearScreen();
 		void UpdateScreen();
 		void UpdateDebugUI();
+		void OnResize();
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	private:

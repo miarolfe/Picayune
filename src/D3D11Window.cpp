@@ -93,7 +93,11 @@ namespace Picayune
 		{
 			MessageBoxW(0, L"Failed to create D3D11 swap chain", L"Fatal Error", MB_OK);
 			return false;
-		}	
+		}
+
+		SetWindowLongPtrW(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+
+		return true;
 	}
 
 	bool D3D11Window::InitDebugUI()
@@ -147,10 +151,42 @@ namespace Picayune
 		ImGui::Render();
 	}
 
-	LRESULT CALLBACK D3D11Window::WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
+	void D3D11Window::OnResize()
 	{
-		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wparam, lparam))
+		if (m_d3d11SwapChain)
+		{
+			m_d3d11DeviceContext->OMSetRenderTargets(0, 0, 0); // ???
+			DestroyD3D11FramebufferRenderTarget(m_d3d11framebufferRenderTarget);
+
+			HRESULT hResult;
+			
+			// Keep existing buffer count, format; resize buffers to hWnd client rect
+			hResult = m_d3d11SwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+			if (FAILED(hResult))
+			{
+				MessageBoxW(0, L"Couldn't resize D3D11 buffers", L"Error", MB_OK);
+			}
+
+			if (!CreateD3D11FramebufferRenderTarget
+			(
+				&m_d3d11framebufferRenderTarget,
+				{
+					m_d3d11SwapChain,
+					m_d3d11Device
+				}
+			)) 
+			{
+				MessageBoxW(0, L"Couldn't create D3D11 framebuffer render target", L"Error", MB_OK);
+			}
+		}
+	}
+
+	LRESULT CALLBACK D3D11Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 			return true;
+
+		D3D11Window* window = (D3D11Window*)(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 		LRESULT result = 0;
 
@@ -158,11 +194,12 @@ namespace Picayune
 		{
 		case WM_SIZE:
 		{
+			if (window) window->OnResize();
 			break;
 		}
 		case WM_KEYDOWN:
 		{
-			if (wparam == VK_ESCAPE) PostQuitMessage(0);
+			if (wParam == VK_ESCAPE) PostQuitMessage(0);
 			break;
 		}
 		case WM_DESTROY:
@@ -171,7 +208,7 @@ namespace Picayune
 			break;
 		}
 		default:
-			result = DefWindowProcW(hWnd, msg, wparam, lparam);
+			result = DefWindowProcW(hWnd, msg, wParam, lParam);
 		}
 
 		return result;

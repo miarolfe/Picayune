@@ -21,6 +21,8 @@ namespace Picayune
 			return false;
 		}
 
+		SetWindowLongPtrW(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+
 		return true;
 	}
 
@@ -52,7 +54,6 @@ namespace Picayune
 
 	void OpenGLWindow::ClearScreen()
 	{
-		glViewport(0, 0, 1280, 720);
 		glClearColor(0.1f, 0.2f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
@@ -70,7 +71,18 @@ namespace Picayune
 		ImGui::NewFrame();
 		ImGui::ShowDemoWindow();
 		ImGui::Render();
-		
+	}
+
+	void OpenGLWindow::OnResize()
+	{
+		RECT rect;
+		if (GetWindowRect(m_hWnd, &rect))
+		{
+			int width = rect.right - rect.left;
+			int height = rect.bottom - rect.top;
+
+			glViewport(0, 0, width, height);
+		}
 	}
 
 	LRESULT CALLBACK OpenGLWindow::WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -78,12 +90,15 @@ namespace Picayune
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wparam, lparam))
 			return true;
 
+		OpenGLWindow* window = (OpenGLWindow*)(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
 		LRESULT result = 0;
 
 		switch (msg)
 		{
 		case WM_SIZE:
 		{
+			if (window) window->OnResize();
 			break;
 		}
 		case WM_KEYDOWN:

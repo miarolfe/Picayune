@@ -24,7 +24,8 @@ namespace Picayune
 		void ClearScreen();
 		void UpdateScreen();
 		void UpdateDebugUI();
-		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		void OnResize();
+		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	};
 
 	struct CreateD3D11DeviceAndContextParams
