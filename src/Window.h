@@ -18,6 +18,5 @@ namespace Picayune
 		virtual void UpdateScreen() { };
 		virtual void UpdateDebugUI() { };
 		virtual void OnResize() { };
-		virtual void* GetDevice() = 0;
 	};
 }

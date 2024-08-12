@@ -184,11 +184,6 @@ namespace Picayune
 		}
 	}
 
-	void* D3D11Window::GetDevice()
-	{
-		return (void*) m_d3d11Device;
-	}
-
 	ID3D11Device1* D3D11Window::GetD3DDevice()
 	{
 		return m_d3d11Device;

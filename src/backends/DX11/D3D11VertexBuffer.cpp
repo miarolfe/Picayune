@@ -10,12 +10,10 @@ namespace Picayune
 
 	void D3D11VertexBuffer::SetBuffer(void* buffer)
 	{
-		return;
-
-		//if (buffer)
-		//{
-		//	m_buffer = (ID3D11Buffer*) buffer;
-		//}
+		if (buffer)
+		{
+			m_buffer = (ID3D11Buffer*) buffer;
+		}
 	}
 
 	bool CreateD3D11VertexBuffer(D3D11VertexBuffer** vertexBufferOut, CreateD3D11VertexBufferParams params)

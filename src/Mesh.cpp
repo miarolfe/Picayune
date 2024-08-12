@@ -134,7 +134,6 @@ namespace Picayune
 			return false;
 		}
 		
-
 		D3D11IndexBuffer* indexBuffer;
 
 		D3D11_BUFFER_DESC indexBufferDesc;
@@ -170,6 +169,32 @@ namespace Picayune
 #endif
 
 #ifdef OPENGL_BUILD
+		OpenGLVertexBuffer* vertexBuffer;
+
+		CreateOpenGLVertexBufferParams vertexBufferParams =
+		{
+			vertices
+		};
+
+		if (!CreateOpenGLVertexBuffer(&vertexBuffer, vertexBufferParams))
+		{
+			return false;
+		}
+
+		OpenGLIndexBuffer* indexBuffer;
+
+		CreateOpenGLIndexBufferParams indexBufferParams =
+		{
+			indices
+		};
+
+		if (!CreateOpenGLIndexBuffer(&indexBuffer, indexBufferParams))
+		{
+			return false;
+		}
+
+		mesh->vertexBuffer = vertexBuffer;
+		mesh->indexBuffer = indexBuffer;
 #endif
 		free(vertices);
 		free(indices);

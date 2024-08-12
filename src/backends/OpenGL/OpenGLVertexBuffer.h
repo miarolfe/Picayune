@@ -1,11 +1,16 @@
 #pragma once
 
+#include "glad/glad.h"
+#include "../../Vertex.h"
 #include "../../VertexBuffer.h"
 
 namespace Picayune
 {
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
+	private:
+		GLuint m_vertexBufferObject;
+
 	public:
 		void* GetBuffer();
 		void SetBuffer(void* buffer);
@@ -13,8 +18,8 @@ namespace Picayune
 
 	struct CreateOpenGLVertexBufferParams
 	{
-
+		Vertex* vertices;
 	};
 
-	static bool CreateOpenGLVertexBuffer(OpenGLVertexBuffer** vertexBufferOut, CreateOpenGLVertexBufferParams params);
+	bool CreateOpenGLVertexBuffer(OpenGLVertexBuffer** vertexBufferOut, CreateOpenGLVertexBufferParams params);
 }
