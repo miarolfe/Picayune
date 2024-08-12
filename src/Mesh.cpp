@@ -11,17 +11,20 @@
 #ifdef DX11_BUILD
 #include "backends/DX11/D3D11VertexBuffer.h"
 #include "backends/DX11/D3D11IndexBuffer.h"
+#include "backends/DX11/D3D11InputLayout.h"
 #include "backends/DX11/D3D11Window.h"
 #endif
 
 #ifdef DX12_BUILD
 #include "backends/DX12/D3D12VertexBuffer.h"
 #include "backends/DX12/D3D12IndexBuffer.h"
+#include "backends/DX12/D3D12InputLayout.h"
 #endif
 
 #ifdef OPENGL_BUILD
 #include "backends/OpenGL/OpenGLVertexBuffer.h"
 #include "backends/OpenGL/OpenGLIndexBuffer.h"
+#include "backends/OpenGL/OpenGLInputLayout.h"
 #endif
 
 namespace Picayune
@@ -193,8 +196,18 @@ namespace Picayune
 			return false;
 		}
 
+		OpenGLInputLayout* inputLayout;
+
+		CreateOpenGLInputLayoutParams inputLayoutParams = { };
+
+		if (!CreateOpenGLInputLayout(&inputLayout, inputLayoutParams))
+		{
+			return false;
+		}
+
 		mesh->vertexBuffer = vertexBuffer;
 		mesh->indexBuffer = indexBuffer;
+		mesh->inputLayout = inputLayout;
 #endif
 		free(vertices);
 		free(indices);

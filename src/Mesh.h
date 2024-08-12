@@ -7,6 +7,7 @@
 #include "Vertex.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "InputLayout.h"
 #include "Window.h"
 
 #ifdef DX11_BUILD
@@ -30,6 +31,7 @@ namespace Picayune
 	{
 		VertexBuffer* vertexBuffer = nullptr;
 		IndexBuffer* indexBuffer = nullptr;
+		InputLayout* inputLayout = nullptr;
 		Texture* textures = nullptr;
 	};
 
