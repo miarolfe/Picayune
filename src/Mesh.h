@@ -10,21 +10,6 @@
 #include "InputLayout.h"
 #include "Window.h"
 
-#ifdef DX11_BUILD
-#include "backends/DX11/D3D11VertexBuffer.h"
-#include "backends/DX11/D3D11IndexBuffer.h"
-#endif
-
-#ifdef DX12_BUILD
-#include "backends/DX12/D3D12VertexBuffer.h"
-#include "backends/DX12/D3D12IndexBuffer.h"
-#endif
-
-#ifdef OPENGL_BUILD
-#include "backends/OpenGL/OpenGLVertexBuffer.h"
-#include "backends/OpenGL/OpenGLIndexBuffer.h"
-#endif
-
 namespace Picayune
 {
 	struct Mesh
