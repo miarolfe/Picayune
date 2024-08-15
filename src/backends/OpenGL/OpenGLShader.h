@@ -17,9 +17,9 @@ namespace Picayune
 
 	struct CreateOpenGLShaderParams
 	{
-
+		GLuint id;
+		const char* source;
 	};
 
-	bool CreateOpenGLShader(OpenGLShader** shaderOut, CreateOpenGLShaderParams params);
-	void DestroyOpenGLShader(OpenGLShader* shader);
+	bool CompileOpenGLShader(CreateOpenGLShaderParams params);
 }

@@ -48,6 +48,7 @@ namespace Picayune
 		// Modify this if changing the inputElementDesc
 		const int numInputElements = 3;
 
+		/*
 		HRESULT hResult;
 		hResult = params.device->CreateInputLayout
 		(
@@ -57,6 +58,7 @@ namespace Picayune
 			nullptr,
 			&d3d11Layout
 		);
+		*/
 
 		return true;
 	}

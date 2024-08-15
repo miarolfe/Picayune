@@ -20,8 +20,8 @@ namespace Picayune
 		void DestroyMeshArray();
 		Mesh GetMesh(int index);
 		void SetMesh(int index, Mesh mesh);
-		void DrawMesh(Mesh mesh, ShaderProgram* shader);
-		void Draw(ShaderProgram* shader);
+		void DrawMesh(Mesh mesh, ShaderProgram* shaderProgram);
+		void Draw(ShaderProgram* shaderProgram);
 	};
 
 	struct CreateModelParams

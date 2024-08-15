@@ -2,6 +2,16 @@
 
 namespace Picayune
 {
+	void OpenGLVertexBuffer::Bind()
+	{
+
+	}
+
+	void OpenGLVertexBuffer::Unbind()
+	{
+
+	}
+
 	void* OpenGLVertexBuffer::GetBuffer()
 	{
 		return (void*) &m_vertexBufferObject;

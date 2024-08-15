@@ -11,6 +11,8 @@ namespace Picayune
 		GLuint m_elementBufferObject;
 
 	public:
+		void Bind();
+		void Unbind();
 		void* GetBuffer();
 		void SetBuffer(void* buffer);
 	};

@@ -23,6 +23,7 @@
 
 #ifdef OPENGL_BUILD
 #include "backends/OpenGL/OpenGLInputLayoutManager.h"
+#include "backends/OpenGL/OpenGLShaderProgram.h"
 #include "backends/OpenGL/OpenGLWindow.h"
 #endif
 
@@ -33,20 +34,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 #ifdef DX11_BUILD
 	Picayune::D3D11Window window;
 	const LPCWSTR windowName = L"PicayuneDX11";
-	Picayune::InputLayoutManager* inputLayoutManager;
+	Picayune::InputLayoutManager* inputLayoutManager = nullptr;
+	Picayune::ShaderProgram* shaderProgram;
 #endif
 
 #ifdef DX12_BUILD
 	Picayune::D3D12Window window;
 	const LPCWSTR windowName = L"PicayuneDX12";
 	Picayune::InputLayoutManager* inputLayoutManager;
+	Picayune::ShaderProgram* shaderProgram;
 #endif
 
 #ifdef OPENGL_BUILD
-	// TODO: Known issue, DPI scaling doesn't work properly
 	Picayune::OpenGLWindow window;
 	const LPCWSTR windowName = L"PicayuneOpenGL";
 	Picayune::OpenGLInputLayoutManager* inputLayoutManager;
+	Picayune::OpenGLShaderProgram* shaderProgram;
 #endif
 
 #ifndef DX11_BUILD
@@ -117,6 +120,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		MessageBoxW(0, L"Failed to initialize OpenGL Input Layout Manager", L"Fatal Error", MB_OK);
 		return 1;
 	}
+
+	OpenGLShaderProgram* shaderProgram = nullptr;
 #endif
 
 	Picayune::Model* model = nullptr;
@@ -141,13 +146,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 			DispatchMessageW(&msg);
 		}
 
-		if (modelLoaded)
-		{
-			int i = 1;
-		}
-
 		window.ClearScreen();
 		window.ClearDebugUI();
+
+#ifdef OPENGL_BUILD
+		if (modelLoaded) model->Draw();
+#endif
 
 		ImGui::Begin("Test", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
 		ImGui::Text("Test");

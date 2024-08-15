@@ -12,6 +12,8 @@ namespace Picayune
 		GLuint m_vertexBufferObject;
 
 	public:
+		void Bind();
+		void Unbind();
 		void* GetBuffer();
 		void SetBuffer(void* buffer);
 	};

@@ -2,6 +2,16 @@
 
 namespace Picayune
 {
+	void OpenGLIndexBuffer::Bind()
+	{
+
+	}
+
+	void OpenGLIndexBuffer::Unbind()
+	{
+
+	}
+
 	void* OpenGLIndexBuffer::GetBuffer()
 	{
 		return (void*) &m_elementBufferObject;

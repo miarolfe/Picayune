@@ -9,6 +9,7 @@
 #include "Model.h"
 
 #ifdef OPENGL_BUILD
+#include "backends/OpenGL/OpenGLInputLayoutManager.h"
 #include "backends/OpenGL/OpenGLShaderProgram.h"
 #endif
 
@@ -50,25 +51,30 @@ namespace Picayune
 		m_meshes[index] = mesh; 
 	}
 
-	void Model::DrawMesh(Mesh mesh, ShaderProgram* shader)
+	void Model::DrawMesh(Mesh mesh, ShaderProgram* shaderProgran)
 	{
 #ifdef OPENGL_BUILD
-		OpenGLShaderProgram* openGLShader = (OpenGLShaderProgram*) shader;
-		m_inputLayoutManager->Bind
-		(
-			{
-				*((GLuint*) mesh->vertexBuffer->GetBuffer()),
-				openGLShader->GetId()
-			}
-		);
+		OpenGLShaderProgram* openGLShaderProgram = (OpenGLShaderProgram*)shaderProgran;
+		OpenGLInputLayoutManagerKey key =
+		{
+			*((GLuint*)mesh.vertexBuffer->GetBuffer()),
+			openGLShaderProgram->GetId()
+		};
+		m_inputLayoutManager->Bind((void*) &key);
+		openGLShaderProgram->Bind();
+
+		// glDrawArrays(GL_TRIANGLES, 0, mesh.vertexBuffer.)
+
+		openGLShaderProgram->Unbind();
+		m_inputLayoutManager->Unbind();
 #endif
 	}
 
-	void Model::Draw(ShaderProgram* shader)
+	void Model::Draw(ShaderProgram* shaderProgram)
 	{
 		for (int i = 0; i < m_numMeshes; i++)
 		{
-			DrawMesh(m_meshes[i], shader);
+			DrawMesh(m_meshes[i], shaderProgram);
 		}
 	}
 
