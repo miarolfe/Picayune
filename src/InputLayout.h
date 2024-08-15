@@ -2,10 +2,8 @@
 
 namespace Picayune
 {
-	class InputLayout
+	struct InputLayout
 	{
-	public:
-		virtual void* GetLayout() { return nullptr; };
-		virtual void SetLayout(void* layout) { };
+	
 	};
 }

@@ -11,7 +11,6 @@ namespace Picayune
 		ID3D11Buffer* m_buffer;
 
 	public:
-		D3D11VertexBuffer() { m_buffer = nullptr; }
 		void* GetBuffer();
 		void SetBuffer(void* buffer);
 	};
@@ -23,5 +22,6 @@ namespace Picayune
 		D3D11_SUBRESOURCE_DATA data;
 	};
 
-	bool CreateD3D11VertexBuffer(D3D11VertexBuffer** vertexBufferOut, CreateD3D11VertexBufferParams params);	
+	bool CreateD3D11VertexBuffer(D3D11VertexBuffer** vertexBufferOut, CreateD3D11VertexBufferParams params);
+	void DestroyD3D11VertexBuffer(D3D11VertexBuffer* vertexBuffer);
 }

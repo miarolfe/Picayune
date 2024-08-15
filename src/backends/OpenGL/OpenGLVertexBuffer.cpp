@@ -18,30 +18,36 @@ namespace Picayune
 
 	bool CreateOpenGLVertexBuffer(OpenGLVertexBuffer** vertexBufferOut, CreateOpenGLVertexBufferParams params)
 	{
+		GLenum error;
+
 		OpenGLVertexBuffer* vertexBuffer = new OpenGLVertexBuffer();
 		if (!vertexBuffer)
 		{
 			return false;
 		}
 
-		GLenum error;
-
-		unsigned int vertexBufferObject;
+		GLuint vertexBufferObject;
 		glGenBuffers(1, &vertexBufferObject);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
+		if (vertexBufferObject == 0)
 		{
-			glDeleteBuffers(1, &vertexBufferObject);
+			delete vertexBuffer;
 			return false;
 		}
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(params.vertices), params.vertices, GL_STATIC_DRAW);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+		if ((error = glGetError()) != GL_NO_ERROR)
 		{
 			glDeleteBuffers(1, &vertexBufferObject);
+			delete vertexBuffer;
+			return false;
+		}
+
+		glBufferData(GL_ARRAY_BUFFER, params.numVertices * sizeof(Vertex), params.vertices, GL_STATIC_DRAW);
+		if ((error = glGetError()) != GL_NO_ERROR)
+		{
+			glDeleteBuffers(1, &vertexBufferObject);
+			delete vertexBuffer;
 			return false;
 		}
 
@@ -51,5 +57,25 @@ namespace Picayune
 		*vertexBufferOut = vertexBuffer;
 
 		return true;
+	}
+
+	void DestroyOpenGLVertexBuffer(OpenGLVertexBuffer* vertexBuffer)
+	{
+		if (vertexBuffer)
+		{
+			GLuint* vertexBufferObjectPtr = (GLuint*) vertexBuffer->GetBuffer();
+			if (vertexBufferObjectPtr)
+			{
+				GLuint vertexBufferObject = *vertexBufferObjectPtr;
+
+				if (vertexBufferObject != 0)
+				{
+					glBindBuffer(GL_ARRAY_BUFFER, 0);
+					glDeleteBuffers(1, vertexBufferObjectPtr);
+				}
+			}
+
+			delete vertexBuffer;
+		}
 	}
 }

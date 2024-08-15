@@ -30,6 +30,7 @@ namespace Picayune
 		hResult = params.device->CreateBuffer(&params.desc, &params.data, &buffer);
 		if (FAILED(hResult))
 		{
+			delete vertexBuffer;
 			return false;
 		}
 
@@ -37,5 +38,19 @@ namespace Picayune
 		*vertexBufferOut = vertexBuffer;
 
 		return true;
+	}
+
+	void DestroyD3D11VertexBuffer(D3D11VertexBuffer* vertexBuffer)
+	{
+		if (vertexBuffer)
+		{
+			ID3D11Buffer* buffer = (ID3D11Buffer*) vertexBuffer->GetBuffer();
+			if (buffer)
+			{
+				buffer->Release();
+			}
+
+			delete vertexBuffer;
+		}
 	}
 }

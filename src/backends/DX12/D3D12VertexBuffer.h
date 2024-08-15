@@ -17,4 +17,5 @@ namespace Picayune
 	};
 
 	bool CreateD3D12VertexBuffer(D3D12VertexBuffer** vertexBufferOut, CreateD3D12VertexBufferParams params);
+	void DestroyD3D12VertexBuffer(D3D12VertexBuffer* vertexBuffer);
 }

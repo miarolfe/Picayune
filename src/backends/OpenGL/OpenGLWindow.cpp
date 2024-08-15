@@ -82,9 +82,7 @@ namespace Picayune
 		if (GetWindowRect(m_hWnd, &rect))
 		{
 			int width = rect.right - rect.left;
-			int height = rect.bottom - rect.top;
-
-			glViewport(0, 0, width, height);
+			int height = rect.bottom - rect.top;		
 		}
 	}
 

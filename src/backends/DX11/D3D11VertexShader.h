@@ -16,4 +16,5 @@ namespace Picayune
 	};
 
 	bool CreateD3D11VertexShader(D3D11VertexShader** pixelShaderOut, CreateD3D11VertexShaderParams params);
+	void DestroyD3D11VertexShader(D3D11VertexShader* vertexShader);
 }

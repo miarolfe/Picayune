@@ -55,8 +55,6 @@ namespace Picayune
 
 			return false;
 		}
-
-
 	}
 
 	void DestroyD3D11Shader(D3D11Shader* shader)

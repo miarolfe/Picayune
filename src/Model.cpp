@@ -5,15 +5,23 @@
 #include "glm/glm.hpp"
 #include "Mesh.h"
 #include "Vertex.h"
+#include "ShaderProgram.h"
 #include "Model.h"
+
+#ifdef OPENGL_BUILD
+#include "backends/OpenGL/OpenGLShaderProgram.h"
+#endif
 
 namespace Picayune
 {
 	bool Model::CreateMeshArray(int numMeshes)
 	{
-		// DestroyMeshArray();
+		DestroyMeshArray();
+
+		m_numMeshes = numMeshes;
 
 		Mesh* meshes = (Mesh*) malloc(numMeshes * sizeof(Mesh));
+		
 		if (!meshes)
 		{
 			return false;
@@ -26,7 +34,10 @@ namespace Picayune
 
 	void Model::DestroyMeshArray()
 	{
-		if (m_meshes) free(m_meshes);
+		for (int i = 0; i < m_numMeshes; i++)
+		{
+			DestroyMesh(m_meshes + i);
+		}
 	}
 
 	Mesh Model::GetMesh(int index)
@@ -39,9 +50,31 @@ namespace Picayune
 		m_meshes[index] = mesh; 
 	}
 
+	void Model::DrawMesh(Mesh mesh, ShaderProgram* shader)
+	{
+#ifdef OPENGL_BUILD
+		OpenGLShaderProgram* openGLShader = (OpenGLShaderProgram*) shader;
+		m_inputLayoutManager->Bind
+		(
+			{
+				*((GLuint*) mesh->vertexBuffer->GetBuffer()),
+				openGLShader->GetId()
+			}
+		);
+#endif
+	}
+
+	void Model::Draw(ShaderProgram* shader)
+	{
+		for (int i = 0; i < m_numMeshes; i++)
+		{
+			DrawMesh(m_meshes[i], shader);
+		}
+	}
+
 	bool CreateModel(Model** modelOut, CreateModelParams params)
 	{
-		Model* model = (Model*) malloc(sizeof(Model));
+		Model* model = new Model;
 		if (!model)
 		{
 			return false;
@@ -59,14 +92,16 @@ namespace Picayune
 
 		for (int i = 0; i < numMeshes; i++)
 		{
+			Mesh* mesh;
+
 			aiMesh* rawMesh = rawScene->mMeshes[i];
 
-			Mesh* mesh;
 			CreateMeshParams meshParams =
 			{
 				rawMesh,
 				rawScene,
-				params.window
+				params.window,
+
 			};
 			if (!CreateMesh(&mesh, meshParams))
 			{
@@ -85,7 +120,7 @@ namespace Picayune
 		if (model)
 		{
 			model->DestroyMeshArray();
-			free(model);
+			delete model;
 		}
 	}
 }

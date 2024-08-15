@@ -3,12 +3,13 @@
 #include <d3d11_1.h>
 #include "D3D11PixelShader.h"
 #include "D3D11VertexShader.h"
-#include "ShaderProgram.h"
+#include "../../ShaderProgram.h"
 
 namespace Picayune
 {
 	class D3D11ShaderProgram : public ShaderProgram
 	{
+	private:
 	
 	};
 
@@ -19,4 +20,5 @@ namespace Picayune
 	};
 
 	bool CreateD3D11ShaderProgram(D3D11ShaderProgram** shaderProgramOut, CreateD3D11ShaderProgramParams params);
+	void DestroyD3D11ShaderProgram(D3D11ShaderProgram* shaderProgram);
 }

@@ -11,20 +11,17 @@
 #ifdef DX11_BUILD
 #include "backends/DX11/D3D11VertexBuffer.h"
 #include "backends/DX11/D3D11IndexBuffer.h"
-#include "backends/DX11/D3D11InputLayout.h"
 #include "backends/DX11/D3D11Window.h"
 #endif
 
 #ifdef DX12_BUILD
 #include "backends/DX12/D3D12VertexBuffer.h"
 #include "backends/DX12/D3D12IndexBuffer.h"
-#include "backends/DX12/D3D12InputLayout.h"
 #endif
 
 #ifdef OPENGL_BUILD
 #include "backends/OpenGL/OpenGLVertexBuffer.h"
 #include "backends/OpenGL/OpenGLIndexBuffer.h"
-#include "backends/OpenGL/OpenGLInputLayout.h"
 #endif
 
 namespace Picayune
@@ -165,18 +162,18 @@ namespace Picayune
 
 		mesh->vertexBuffer = vertexBuffer;
 		mesh->indexBuffer = indexBuffer;
-		
 #endif
 
 #ifdef DX12_BUILD
 #endif
 
 #ifdef OPENGL_BUILD
-		OpenGLVertexBuffer* vertexBuffer;
+		OpenGLVertexBuffer* vertexBuffer = nullptr;
 
 		CreateOpenGLVertexBufferParams vertexBufferParams =
 		{
-			vertices
+			vertices,
+			numVertices,
 		};
 
 		if (!CreateOpenGLVertexBuffer(&vertexBuffer, vertexBufferParams))
@@ -184,11 +181,12 @@ namespace Picayune
 			return false;
 		}
 
-		OpenGLIndexBuffer* indexBuffer;
+		OpenGLIndexBuffer* indexBuffer = nullptr;
 
 		CreateOpenGLIndexBufferParams indexBufferParams =
 		{
-			indices
+			indices,
+			numIndices
 		};
 
 		if (!CreateOpenGLIndexBuffer(&indexBuffer, indexBufferParams))
@@ -196,19 +194,10 @@ namespace Picayune
 			return false;
 		}
 
-		OpenGLInputLayout* inputLayout;
-
-		CreateOpenGLInputLayoutParams inputLayoutParams = { };
-
-		if (!CreateOpenGLInputLayout(&inputLayout, inputLayoutParams))
-		{
-			return false;
-		}
-
 		mesh->vertexBuffer = vertexBuffer;
 		mesh->indexBuffer = indexBuffer;
-		mesh->inputLayout = inputLayout;
 #endif
+
 		free(vertices);
 		free(indices);
 
@@ -219,9 +208,22 @@ namespace Picayune
 
 	void DestroyMesh(Mesh* mesh)
 	{
-		// TODO: NOT FINISHED!!!
-		if (mesh->vertexBuffer) free(mesh->vertexBuffer);
-		if (mesh->indexBuffer) free(mesh->indexBuffer);
+
+#ifdef DX11_BUILD
+		DestroyD3D11VertexBuffer((D3D11VertexBuffer*) mesh->vertexBuffer);
+		DestroyD3D11IndexBuffer((D3D11IndexBuffer*) mesh->indexBuffer);
+#endif
+
+#ifdef DX12_BUILD
+		DestroyD3D12VertexBuffer((D3D12VertexBuffer*) mesh->vertexBuffer);
+		DestroyD3D12IndexBuffer((D3D12IndexBuffer*)mesh->indexBuffer);
+#endif
+
+#ifdef OPENGL_BUILD
+		DestroyOpenGLVertexBuffer((OpenGLVertexBuffer*) mesh->vertexBuffer);
+		DestroyOpenGLIndexBuffer((OpenGLIndexBuffer*) mesh->indexBuffer);
+#endif
+
 		if (mesh->textures) free(mesh->textures);
 		if (mesh) free(mesh);
 	}

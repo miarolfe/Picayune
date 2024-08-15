@@ -17,4 +17,5 @@ namespace Picayune
 	};
 
 	bool CreateD3D12IndexBuffer(D3D12IndexBuffer** indexBufferOut, CreateD3D12IndexBufferParams params);
+	void DestroyD3D12IndexBuffer(D3D12IndexBuffer* indexBuffer);
 }

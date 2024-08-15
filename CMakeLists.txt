@@ -14,12 +14,9 @@ set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_NO_EXPORT ON)
 set(ASSIMP_BUILD_IFC_IMPORTER OFF)
 add_subdirectory(vendor/assimp)
-
-# add_subdirectory(vendor/EAAssert)
-# add_subdirectory(vendor/EAStdC)
-# add_subdirectory(vendor/EASTL)
-# add_subdirectory(vendor/EAThread)
-add_subdirectory(vendor/glm)
+add_subdirectory(vendor/EABase)
+add_subdirectory(vendor/EASTL)
+# add_subdirectory(vendor/glm)
 
 set (WIN32_LIBRARIES
 	user32
@@ -36,10 +33,8 @@ set (ASSIMP_HEADERS
 )
 
 set(EA_LIBRARIES
-	EAAssert
-	EAStdC
+	EABase
 	EASTL
-	EAThread
 )
 
 set(GLM_HEADERS
@@ -88,6 +83,7 @@ set(CORE_HEADERS
 set(D3D11_SOURCE
 	src/backends/DX11/D3D11IndexBuffer.cpp
 	src/backends/DX11/D3D11InputLayout.cpp
+	src/backends/DX11/D3D11InputLayoutManager.cpp
 	src/backends/DX11/D3D11PixelShader.cpp
 	src/backends/DX11/D3D11Shader.cpp
 	src/backends/DX11/D3D11ShaderProgram.cpp
@@ -100,6 +96,7 @@ set(D3D11_SOURCE
 set(D3D11_HEADERS
 	src/backends/DX11/D3D11IndexBuffer.h
 	src/backends/DX11/D3D11InputLayout.h
+	src/backends/DX11/D3D11InputLayoutManager.h
 	src/backends/DX11/D3D11PixelShader.h
 	src/backends/DX11/D3D11Shader.h
 	src/backends/DX11/D3D11ShaderProgram.h
@@ -112,6 +109,7 @@ set(D3D11_HEADERS
 set(D3D12_SOURCE
 	src/backends/DX12/D3D12IndexBuffer.h
 	src/backends/DX12/D3D12InputLayout.h
+	src/backends/DX12/D3D12InputLayoutManager.cpp
 	src/backends/DX12/D3D12PixelShader.h
 	src/backends/DX12/D3D12Shader.h
 	src/backends/DX12/D3D12ShaderProgram.h
@@ -124,6 +122,7 @@ set(D3D12_SOURCE
 set(D3D12_HEADERS
 	src/backends/DX12/D3D12IndexBuffer.cpp
 	src/backends/DX12/D3D12InputLayout.cpp
+	src/backends/DX12/D3D12InputLayoutManager.h
 	src/backends/DX12/D3D12PixelShader.cpp
 	src/backends/DX12/D3D12Shader.cpp
 	src/backends/DX12/D3D12ShaderProgram.cpp
@@ -137,6 +136,7 @@ set(OPENGL_SOURCE
 	src/backends/OpenGL/glad.c
 	src/backends/OpenGL/OpenGLIndexBuffer.cpp
 	src/backends/OpenGL/OpenGLInputLayout.cpp
+	src/backends/OpenGL/OpenGLInputLayoutManager.cpp
 	src/backends/OpenGL/OpenGLPixelShader.cpp
 	src/backends/OpenGL/OpenGLShader.cpp
 	src/backends/OpenGL/OpenGLVertexBuffer.cpp
@@ -148,6 +148,7 @@ set(OPENGL_SOURCE
 set(OPENGL_HEADERS
 	src/backends/OpenGL/OpenGLIndexBuffer.h
 	src/backends/OpenGL/OpenGLInputLayout.h
+	src/backends/OpenGL/OpenGLInputLayoutManager.cpp
 	src/backends/OpenGL/OpenGLPixelShader.h
 	src/backends/OpenGL/OpenGLShader.h
 	src/backends/OpenGL/OpenGLVertexBuffer.h
@@ -170,9 +171,9 @@ target_include_directories(PicayuneDX11 PRIVATE vendor/ vendor/assimp/include ve
 target_include_directories(PicayuneDX12 PRIVATE vendor/ vendor/assimp/include vendor/imgui vendor/glm)
 target_include_directories(PicayuneOpenGL PRIVATE vendor/ vendor/assimp/include vendor/imgui vendor/glm)
 
-target_link_libraries(PicayuneDX11 d3d11 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES})# ${EA_LIBRARIES})
-target_link_libraries(PicayuneDX12 d3d12 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES})# ${EA_LIBRARIES})
-target_link_libraries(PicayuneOpenGL opengl32 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES})# ${EA_LIBRARIES})
+target_link_libraries(PicayuneDX11 d3d11 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES} ${EA_LIBRARIES})
+target_link_libraries(PicayuneDX12 d3d12 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES} ${EA_LIBRARIES})
+target_link_libraries(PicayuneOpenGL opengl32 ${WIN32_LIBRARIES} ${ASSIMP_LIBRARIES} ${EA_LIBRARIES})
 
 set_target_properties(
     PicayuneDX11 PicayuneDX12 PicayuneOpenGL

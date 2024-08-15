@@ -10,14 +10,19 @@
 #include "Model.h"
 
 #ifdef DX11_BUILD
+#include "InputLayoutManager.h"
+#include "backends/DX11/D3D11InputLayoutManager.h"
 #include "backends/DX11/D3D11Window.h"
 #endif
 
 #ifdef DX12_BUILD
+#include "InputLayoutManager.h"
+#include "backends/DX12/D3D12InputLayoutManager.h"
 #include "backends/DX12/D3D12Window.h"
 #endif
 
 #ifdef OPENGL_BUILD
+#include "backends/OpenGL/OpenGLInputLayoutManager.h"
 #include "backends/OpenGL/OpenGLWindow.h"
 #endif
 
@@ -28,17 +33,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 #ifdef DX11_BUILD
 	Picayune::D3D11Window window;
 	const LPCWSTR windowName = L"PicayuneDX11";
+	Picayune::InputLayoutManager* inputLayoutManager;
 #endif
 
 #ifdef DX12_BUILD
 	Picayune::D3D12Window window;
 	const LPCWSTR windowName = L"PicayuneDX12";
+	Picayune::InputLayoutManager* inputLayoutManager;
 #endif
 
 #ifdef OPENGL_BUILD
 	// TODO: Known issue, DPI scaling doesn't work properly
 	Picayune::OpenGLWindow window;
 	const LPCWSTR windowName = L"PicayuneOpenGL";
+	Picayune::OpenGLInputLayoutManager* inputLayoutManager;
 #endif
 
 #ifndef DX11_BUILD
@@ -60,7 +68,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 	};
 
 	HWND hWnd;
-	if (!Picayune::GetWin32Window(&hWnd, windowParams))
+	if (!Picayune::CreateWin32Window(&hWnd, windowParams))
 	{
 		MessageBoxW(0, L"Failed to create window", L"Fatal Error", MB_OK);
 		return GetLastError();
@@ -91,25 +99,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		100.0f				// far plane
 	};
 
-
 	if (!Picayune::CreateCamera(&camera, cameraParams))
 	{
 		MessageBoxW(0, L"Failed to create camera", L"Fatal Error", MB_OK);
 		return 1;
 	}
 
-	Picayune::Model* model;
+#ifdef OPENGL_BUILD
+	if (!CreateOpenGLInputLayoutManager(&inputLayoutManager))
+	{
+		MessageBoxW(0, L"Failed to create OpenGL Input Layout Manager", L"Fatal Error", MB_OK);
+		return 1;
+	}
+
+	if (!inputLayoutManager->Init())
+	{
+		MessageBoxW(0, L"Failed to initialize OpenGL Input Layout Manager", L"Fatal Error", MB_OK);
+		return 1;
+	}
+#endif
+
+	Picayune::Model* model = nullptr;
 	Picayune::CreateModelParams modelParams =
 	{
 		"assets/sphere.fbx",
 		aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace,
-		(Picayune::Window*) &window
+		(Picayune::Window*) &window,
+		inputLayoutManager
 	};
-	if (!Picayune::CreateModel(&model, modelParams))
-	{
-		MessageBoxW(0, L"Failed to create model", L"Fatal Error", MB_OK);
-		return 1;
-	}
+
+	bool modelLoaded = false;
 	
 	bool running = true;
 	while (running)
@@ -122,16 +141,49 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 			DispatchMessageW(&msg);
 		}
 
+		if (modelLoaded)
+		{
+			int i = 1;
+		}
+
 		window.ClearScreen();
 		window.ClearDebugUI();
 
 		ImGui::Begin("Test", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
 		ImGui::Text("Test");
+		if (modelLoaded)
+		{
+			if (ImGui::Button("Unload model"))
+			{
+				Picayune::DestroyModel(model);
+				model = nullptr;
+				modelLoaded = false;
+			}
+		}
+		else
+		{
+			if (ImGui::Button("Load model"))
+			{
+				if (!Picayune::CreateModel(&model, modelParams))
+				{
+					MessageBoxW(0, L"Failed to create model", L"Fatal Error", MB_OK);
+					return 1;
+				}
+				modelLoaded = true;
+			}
+		}
+		
 		ImGui::End();
 
 		window.UpdateDebugUI();
 		window.UpdateScreen();
 	}
+
+	if (model) Picayune::DestroyModel(model);
+
+#ifdef OPENGL_BUILD
+	Picayune::DestroyOpenGLInputLayoutManager(inputLayoutManager);
+#endif
 
 	Picayune::DestroyCamera(camera);
 	window.Shutdown();

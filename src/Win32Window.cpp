@@ -2,7 +2,7 @@
 
 namespace Picayune
 {
-	bool GetWin32Window(HWND* windowHandleOut, Win32WindowParams params)
+	bool CreateWin32Window(HWND* windowHandleOut, Win32WindowParams params)
 	{
 		WNDCLASSEXW winClass = {};
 		winClass.cbSize = sizeof(WNDCLASSEXW);

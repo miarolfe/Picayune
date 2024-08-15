@@ -2,24 +2,23 @@
 
 #include <glad/glad.h>
 #include "../../Vertex.h"
+#include "OpenGLVertexBuffer.h"
+#include "OpenGLIndexBuffer.h"
 #include "../../InputLayout.h"
 
 namespace Picayune
 {
-	class OpenGLInputLayout : public InputLayout
+	struct OpenGLInputLayout : public InputLayout
 	{
-	private:
-		GLuint m_vertexAttributeObject;
-
-	public:
-		void* GetLayout();
-		void SetLayout(void* layout);
+		GLuint vertexAttributeObject;
 	};
 
 	struct CreateOpenGLInputLayoutParams
 	{
-
+		OpenGLVertexBuffer* vertexBuffer;
+		OpenGLIndexBuffer* indexBuffer;
 	};
 
 	bool CreateOpenGLInputLayout(OpenGLInputLayout** inputLayoutOut, CreateOpenGLInputLayoutParams params);
+	void DestroyOpenGLInputLayout(OpenGLInputLayout* inputLayout);
 }

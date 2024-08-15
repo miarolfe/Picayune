@@ -12,7 +12,6 @@ namespace Picayune
 	private:
 		HWND m_hWnd;
 		
-
 	public:
 		bool Init(HWND hWnd);
 		bool InitDebugUI();

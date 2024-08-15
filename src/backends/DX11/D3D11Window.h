@@ -59,4 +59,6 @@ namespace Picayune
 	void DestroyD3D11DeviceAndContext(ID3D11Device1* device, ID3D11DeviceContext1* deviceContext);
 	void DestroyD3D11SwapChain(IDXGISwapChain1* swapChain);
 	void DestroyD3D11FramebufferRenderTarget(ID3D11RenderTargetView* framebufferRenderTarget);
+
+	// TODO: destroy funcs
 }

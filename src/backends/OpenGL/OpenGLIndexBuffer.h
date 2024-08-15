@@ -18,7 +18,9 @@ namespace Picayune
 	struct CreateOpenGLIndexBufferParams
 	{
 		unsigned int* indices;
+		int numIndices;
 	};
 
 	bool CreateOpenGLIndexBuffer(OpenGLIndexBuffer** indexBufferOut, CreateOpenGLIndexBufferParams params);
+	void DestroyOpenGLIndexBuffer(OpenGLIndexBuffer* indexBuffer);
 }

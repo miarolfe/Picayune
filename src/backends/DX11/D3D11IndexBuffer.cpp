@@ -29,6 +29,7 @@ namespace Picayune
 		hResult = params.device->CreateBuffer(&params.desc, &params.data, &buffer);
 		if (FAILED(hResult))
 		{
+			delete indexBuffer;
 			return false;
 		}
 
@@ -38,5 +39,17 @@ namespace Picayune
 		return true;
 	}
 
-	// TODO: Destroy
+	void DestroyD3D11IndexBuffer(D3D11IndexBuffer* indexBuffer)
+	{
+		if (indexBuffer)
+		{
+			ID3D11Buffer* buffer = (ID3D11Buffer*) indexBuffer->GetBuffer();
+			if (buffer)
+			{
+				buffer->Release();
+			}
+
+			delete indexBuffer;
+		}
+	}
 }

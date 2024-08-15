@@ -19,7 +19,9 @@ namespace Picayune
 	struct CreateOpenGLVertexBufferParams
 	{
 		Vertex* vertices;
+		int numVertices;
 	};
 
 	bool CreateOpenGLVertexBuffer(OpenGLVertexBuffer** vertexBufferOut, CreateOpenGLVertexBufferParams params);
+	void DestroyOpenGLVertexBuffer(OpenGLVertexBuffer* vertexBuffer);
 }
