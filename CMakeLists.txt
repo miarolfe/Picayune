@@ -67,6 +67,7 @@ set(CORE_SOURCE
 	src/Camera.cpp
 	src/Mesh.cpp
 	src/Model.cpp
+	src/GraphicsBackend.cpp
 )
 
 set(CORE_HEADERS
@@ -78,6 +79,7 @@ set(CORE_HEADERS
 	src/Texture.h
 	src/Mesh.h
 	src/Model.h
+	src/GraphicsBackend.h
 )
 
 set(D3D11_SOURCE
@@ -134,6 +136,7 @@ set(D3D12_HEADERS
 
 set(OPENGL_SOURCE
 	src/backends/OpenGL/glad.c
+	src/backends/OpenGL/OpenGLBackend.cpp
 	src/backends/OpenGL/OpenGLIndexBuffer.cpp
 	src/backends/OpenGL/OpenGLInputLayout.cpp
 	src/backends/OpenGL/OpenGLInputLayoutManager.cpp
@@ -147,6 +150,7 @@ set(OPENGL_SOURCE
 )
 
 set(OPENGL_HEADERS
+	src/backends/OpenGL/OpenGLBackend.h
 	src/backends/OpenGL/OpenGLIndexBuffer.h
 	src/backends/OpenGL/OpenGLInputLayout.h
 	src/backends/OpenGL/OpenGLInputLayoutManager.h

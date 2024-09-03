@@ -30,5 +30,7 @@ namespace Picayune
 		void DestroyGLDevice();
 	};
 
+	// TODO: Destroy window
+
 	
 }

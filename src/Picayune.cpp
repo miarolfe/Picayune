@@ -121,7 +121,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		return 1;
 	}
 
-	OpenGLShaderProgram* shaderProgram = nullptr;
+	// OpenGLShaderProgram* shaderProgram = nullptr;
 #endif
 
 	Picayune::Model* model = nullptr;
@@ -149,9 +149,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		window.ClearScreen();
 		window.ClearDebugUI();
 
-#ifdef OPENGL_BUILD
-		if (modelLoaded) model->Draw();
-#endif
+//#ifdef OPENGL_BUILD
+//		if (modelLoaded) model->Draw();
+//#endif
 
 		ImGui::Begin("Test", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
 		ImGui::Text("Test");
