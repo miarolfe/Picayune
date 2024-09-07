@@ -14,12 +14,9 @@ set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_NO_EXPORT ON)
 set(ASSIMP_BUILD_IFC_IMPORTER OFF)
 add_subdirectory(vendor/assimp)
-
-# add_subdirectory(vendor/EAAssert)
-# add_subdirectory(vendor/EAStdC)
+# add_subdirectory(vendor/EABase)
 # add_subdirectory(vendor/EASTL)
-# add_subdirectory(vendor/EAThread)
-add_subdirectory(vendor/glm)
+# add_subdirectory(vendor/glm)
 
 set (WIN32_LIBRARIES
 	user32
@@ -36,10 +33,8 @@ set (ASSIMP_HEADERS
 )
 
 set(EA_LIBRARIES
-	EAAssert
-	EAStdC
+	EABase
 	EASTL
-	EAThread
 )
 
 set(GLM_HEADERS
@@ -67,27 +62,36 @@ set(IMGUI_HEADERS
 )
 
 set(CORE_SOURCE
-	src/Picayune.cpp
-	src/Win32Window.cpp
 	src/Camera.cpp
+	src/GraphicsBackend.cpp
 	src/Mesh.cpp
 	src/Model.cpp
+	src/Picayune.cpp
+	src/Win32Window.cpp
 )
 
 set(CORE_HEADERS
-	src/Picayune.h
-	src/Window.h
-	src/Win32Window.h
 	src/Camera.h
-	src/Vertex.h
-	src/Texture.h
+	src/GraphicsBackend.h
+	src/IndexBuffer.h
+	src/InputLayout.h
+	src/InputLayoutManager.h
 	src/Mesh.h
 	src/Model.h
+	src/Picayune.h
+	src/Shader.h
+	src/ShaderProgram.h
+	src/Texture.h
+	src/Vertex.h
+	src/VertexBuffer.h
+	src/Window.h
+	src/Win32Window.h
 )
 
 set(D3D11_SOURCE
 	src/backends/DX11/D3D11IndexBuffer.cpp
 	src/backends/DX11/D3D11InputLayout.cpp
+	src/backends/DX11/D3D11InputLayoutManager.cpp
 	src/backends/DX11/D3D11PixelShader.cpp
 	src/backends/DX11/D3D11Shader.cpp
 	src/backends/DX11/D3D11ShaderProgram.cpp
@@ -100,6 +104,7 @@ set(D3D11_SOURCE
 set(D3D11_HEADERS
 	src/backends/DX11/D3D11IndexBuffer.h
 	src/backends/DX11/D3D11InputLayout.h
+	src/backends/DX11/D3D11InputLayoutManager.h
 	src/backends/DX11/D3D11PixelShader.h
 	src/backends/DX11/D3D11Shader.h
 	src/backends/DX11/D3D11ShaderProgram.h
@@ -110,35 +115,40 @@ set(D3D11_HEADERS
 )
 
 set(D3D12_SOURCE
-	src/backends/DX12/D3D12IndexBuffer.h
-	src/backends/DX12/D3D12InputLayout.h
-	src/backends/DX12/D3D12PixelShader.h
-	src/backends/DX12/D3D12Shader.h
-	src/backends/DX12/D3D12ShaderProgram.h
-	src/backends/DX12/D3D12VertexBuffer.h
-	src/backends/DX12/D3D12VertexShader.h
-	src/backends/DX12/D3D12Window.h
-	vendor/imgui/backends/imgui_impl_dx12.cpp
-)
-
-set(D3D12_HEADERS
 	src/backends/DX12/D3D12IndexBuffer.cpp
 	src/backends/DX12/D3D12InputLayout.cpp
+	src/backends/DX12/D3D12InputLayoutManager.cpp
 	src/backends/DX12/D3D12PixelShader.cpp
 	src/backends/DX12/D3D12Shader.cpp
 	src/backends/DX12/D3D12ShaderProgram.cpp
 	src/backends/DX12/D3D12VertexBuffer.cpp
 	src/backends/DX12/D3D12VertexShader.cpp
 	src/backends/DX12/D3D12Window.cpp
+	vendor/imgui/backends/imgui_impl_dx12.cpp
+)
+
+set(D3D12_HEADERS
+	src/backends/DX12/D3D12IndexBuffer.h
+	src/backends/DX12/D3D12InputLayout.h
+	src/backends/DX12/D3D12InputLayoutManager.h
+	src/backends/DX12/D3D12PixelShader.h
+	src/backends/DX12/D3D12Shader.h
+	src/backends/DX12/D3D12ShaderProgram.h
+	src/backends/DX12/D3D12VertexBuffer.h
+	src/backends/DX12/D3D12VertexShader.h
+	src/backends/DX12/D3D12Window.h
 	vendor/imgui/backends/imgui_impl_dx12.h
 )
 
 set(OPENGL_SOURCE
 	src/backends/OpenGL/glad.c
+	src/backends/OpenGL/OpenGLBackend.cpp
 	src/backends/OpenGL/OpenGLIndexBuffer.cpp
 	src/backends/OpenGL/OpenGLInputLayout.cpp
+	src/backends/OpenGL/OpenGLInputLayoutManager.cpp
 	src/backends/OpenGL/OpenGLPixelShader.cpp
 	src/backends/OpenGL/OpenGLShader.cpp
+	src/backends/OpenGL/OpenGLShaderProgram.cpp
 	src/backends/OpenGL/OpenGLVertexBuffer.cpp
 	src/backends/OpenGL/OpenGLVertexShader.cpp
 	src/backends/OpenGL/OpenGLWindow.cpp
@@ -146,10 +156,13 @@ set(OPENGL_SOURCE
 )
 
 set(OPENGL_HEADERS
+	src/backends/OpenGL/OpenGLBackend.h
 	src/backends/OpenGL/OpenGLIndexBuffer.h
 	src/backends/OpenGL/OpenGLInputLayout.h
+	src/backends/OpenGL/OpenGLInputLayoutManager.h
 	src/backends/OpenGL/OpenGLPixelShader.h
 	src/backends/OpenGL/OpenGLShader.h
+	src/backends/OpenGL/OpenGLShaderProgram.h
 	src/backends/OpenGL/OpenGLVertexBuffer.h
 	src/backends/OpenGL/OpenGLVertexShader.h
 	src/backends/OpenGL/OpenGLWindow.h
